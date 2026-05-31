@@ -3,499 +3,687 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Konter Monitor ⚡</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.6.0/dist/tabler-icons.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=Exo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+<title>コンター監視 ⚡ Konter Monitor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Dots&family=M+PLUS+Rounded+1c:wght@400;700;800;900&family=Noto+Sans+JP:wght@400;700;900&family=DotGothic16&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
+/* ══════════════════════════════════════
+   ANIME 2D ART — DARK MODE SYSTEM
+══════════════════════════════════════ */
 :root {
-  --navy: #0a0f1e;
-  --navy2: #0d1426;
-  --navy3: #111827;
-  --panel: #0f1929;
-  --panel2: #142038;
-  --cyan: #00d4ff;
-  --cyan2: #00b8e6;
-  --cyan3: #007aad;
-  --cyan-glow: rgba(0,212,255,0.18);
-  --cyan-dim: rgba(0,212,255,0.08);
-  --gold: #ffd700;
-  --gold2: #e6b800;
-  --gold-glow: rgba(255,215,0,0.15);
-  --mint: #00ffb3;
-  --mint-dim: rgba(0,255,179,0.1);
-  --red: #ff4466;
-  --red-dim: rgba(255,68,102,0.1);
-  --border: rgba(0,212,255,0.2);
-  --border2: rgba(0,212,255,0.1);
-  --text: #e0f0ff;
-  --text2: #7aa8cc;
-  --text3: #3d6080;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --shadow: 0 4px 24px rgba(0,0,0,0.5);
-  --glow: 0 0 20px rgba(0,212,255,0.25);
+  --ink: #0d0d14;
+  --ink2: #13131f;
+  --ink3: #1a1a2e;
+  --panel: #16162a;
+  --panel2: #1e1e35;
+  --panel3: #252542;
+  --sakura: #ff6b9d;
+  --sakura2: #ff8fb3;
+  --sakura3: #ffb3cc;
+  --sakura-glow: rgba(255,107,157,0.2);
+  --sakura-dim: rgba(255,107,157,0.08);
+  --gold: #ffd166;
+  --gold2: #ffb830;
+  --gold-glow: rgba(255,209,102,0.15);
+  --mint: #06ffa5;
+  --mint-dim: rgba(6,255,165,0.1);
+  --sky: #74b9ff;
+  --sky-dim: rgba(116,185,255,0.1);
+  --red: #ff4b6e;
+  --red-dim: rgba(255,75,110,0.1);
+  --purple: #a29bfe;
+  --border: rgba(255,107,157,0.18);
+  --border2: rgba(255,107,157,0.08);
+  --text: #f0e6ff;
+  --text2: #9e8fb5;
+  --text3: #584d75;
+  --radius: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.6);
+  --glow-pink: 0 0 20px rgba(255,107,157,0.3);
+  --glow-gold: 0 0 20px rgba(255,209,102,0.25);
+
+  /* Manga border thickness */
+  --border-w: 2px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Exo 2', system-ui, sans-serif;
-  background: var(--navy);
+  font-family: 'M PLUS Rounded 1c', 'Noto Sans JP', sans-serif;
+  background: var(--ink);
   min-height: 100vh;
   color: var(--text);
   overflow-x: hidden;
 }
 
-/* ── GRID BG ── */
+/* ── HALFTONE DOTS BG ── */
 body::before {
   content: '';
   position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  background-image:
-    linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
-  background-size: 40px 40px;
+  background-image: radial-gradient(circle, rgba(255,107,157,0.07) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
-body::after {
+
+/* ── SAKURA PETALS ── */
+.sakura-container {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+}
+.petal {
+  position: absolute;
+  width: 8px; height: 8px;
+  background: var(--sakura3);
+  border-radius: 0 80% 0 80%;
+  opacity: 0;
+  animation: fall linear infinite;
+  top: -20px;
+}
+.petal:nth-child(1)  { left:5%;  animation-duration:7s;  animation-delay:0s;   width:6px; height:6px; background:#ffb3cc; }
+.petal:nth-child(2)  { left:15%; animation-duration:9s;  animation-delay:1.5s; width:10px; height:10px; }
+.petal:nth-child(3)  { left:28%; animation-duration:6s;  animation-delay:3s;   width:7px; height:7px; background:#ffd6e7; }
+.petal:nth-child(4)  { left:42%; animation-duration:11s; animation-delay:0.8s; }
+.petal:nth-child(5)  { left:55%; animation-duration:8s;  animation-delay:2s;   width:5px; height:5px; background:#ff8fb3; }
+.petal:nth-child(6)  { left:68%; animation-duration:10s; animation-delay:4s;   width:9px; height:9px; }
+.petal:nth-child(7)  { left:78%; animation-duration:7.5s;animation-delay:1s;   width:6px; height:6px; background:#ffd6e7; }
+.petal:nth-child(8)  { left:88%; animation-duration:9.5s;animation-delay:2.5s; }
+.petal:nth-child(9)  { left:35%; animation-duration:12s; animation-delay:5s;   width:4px; height:4px; background:#ffcce0; }
+.petal:nth-child(10) { left:92%; animation-duration:8.5s;animation-delay:3.5s; width:7px; height:7px; }
+
+@keyframes fall {
+  0%   { top: -20px; opacity: 0; transform: rotate(0deg) translateX(0); }
+  10%  { opacity: 0.7; }
+  85%  { opacity: 0.5; }
+  100% { top: 110vh; opacity: 0; transform: rotate(360deg) translateX(30px); }
+}
+
+/* ── MANGA PANEL BORDERS (comic style corners) ── */
+.manga-panel {
+  position: relative;
+}
+.manga-panel::before, .manga-panel::after {
   content: '';
-  position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  background:
-    radial-gradient(ellipse at 15% 20%, rgba(0,212,255,0.07) 0%, transparent 50%),
-    radial-gradient(ellipse at 85% 80%, rgba(0,180,230,0.05) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0.3) 0%, transparent 70%);
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
+}
+.manga-corner {
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
+}
+.mc-tl { top: -2px; left: -2px; width: 14px; height: 14px;
+  border-top: 3px solid var(--sakura); border-left: 3px solid var(--sakura); }
+.mc-tr { top: -2px; right: -2px; width: 14px; height: 14px;
+  border-top: 3px solid var(--sakura); border-right: 3px solid var(--sakura); }
+.mc-bl { bottom: -2px; left: -2px; width: 14px; height: 14px;
+  border-bottom: 3px solid var(--sakura); border-left: 3px solid var(--sakura); }
+.mc-br { bottom: -2px; right: -2px; width: 14px; height: 14px;
+  border-bottom: 3px solid var(--sakura); border-right: 3px solid var(--sakura); }
+
+/* ══════════════════════════════════════
+   LOADING OVERLAY — ANIME STYLE
+══════════════════════════════════════ */
+#loading-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse at center, #1a0a2e 0%, #0d0814 100%);
+  z-index: 8000;
+  align-items: center; justify-content: center; flex-direction: column; gap: 20px;
+  overflow: hidden;
+}
+#loading-overlay.visible { display: flex; }
+
+/* Screen lines effect */
+#loading-overlay::before {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,107,157,0.025) 3px, rgba(255,107,157,0.025) 4px);
 }
 
-/* Scan line effect */
-@keyframes scanline {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100vh); }
-}
-.scan-overlay {
-  position: fixed; inset: 0; pointer-events: none; z-index: 1;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,212,255,0.015) 2px, rgba(0,212,255,0.015) 4px);
+.loader-art {
+  position: relative;
+  width: 120px; height: 120px;
+  display: flex; align-items: center; justify-content: center;
 }
 
-/* ── DECO FLOATIES ── */
-.deco {
-  position: fixed; pointer-events: none; z-index: 0;
-  font-size: 20px; opacity: 0.07; user-select: none;
-  animation: float 8s ease-in-out infinite;
-  filter: hue-rotate(160deg);
+/* Spinning ring */
+.loader-ring {
+  position: absolute; inset: 0;
+  border: 3px solid transparent;
+  border-top-color: var(--sakura);
+  border-right-color: var(--gold);
+  border-radius: 50%;
+  animation: ring-spin 1.2s linear infinite;
 }
-.deco:nth-child(2) { top: 8%; left: 5%; animation-delay: 0s; font-size: 28px; }
-.deco:nth-child(3) { top: 30%; right: 4%; animation-delay: 2s; font-size: 18px; }
-.deco:nth-child(4) { bottom: 25%; left: 3%; animation-delay: 4s; font-size: 22px; }
-.deco:nth-child(5) { top: 60%; right: 6%; animation-delay: 1.5s; font-size: 16px; }
-@keyframes float {
-  0%,100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-14px) rotate(8deg); }
+.loader-ring2 {
+  position: absolute; inset: 12px;
+  border: 2px solid transparent;
+  border-bottom-color: var(--purple);
+  border-left-color: var(--mint);
+  border-radius: 50%;
+  animation: ring-spin 0.8s linear infinite reverse;
+}
+@keyframes ring-spin { to { transform: rotate(360deg); } }
+
+/* Chibi character in center */
+.loader-chibi {
+  font-size: 42px;
+  animation: chibi-bounce 0.8s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 12px var(--sakura));
+  position: relative; z-index: 1;
+}
+@keyframes chibi-bounce {
+  0%   { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-8px) scale(1.05); }
 }
 
-/* ── HEX CORNER ── */
-.hex-corner {
-  position: absolute; width: 12px; height: 12px; pointer-events: none;
+/* Loading text — typewriter */
+.loading-title {
+  font-family: 'Zen Dots', monospace;
+  font-size: 18px; color: var(--sakura);
+  letter-spacing: 4px; text-transform: uppercase;
+  text-shadow: 0 0 20px var(--sakura);
+  animation: text-flicker 2s ease-in-out infinite;
 }
-.hex-corner.tl { top: -1px; left: -1px; border-top: 2px solid var(--cyan); border-left: 2px solid var(--cyan); }
-.hex-corner.tr { top: -1px; right: -1px; border-top: 2px solid var(--cyan); border-right: 2px solid var(--cyan); }
-.hex-corner.bl { bottom: -1px; left: -1px; border-bottom: 2px solid var(--cyan); border-left: 2px solid var(--cyan); }
-.hex-corner.br { bottom: -1px; right: -1px; border-bottom: 2px solid var(--cyan); border-right: 2px solid var(--cyan); }
+@keyframes text-flicker {
+  0%,100% { opacity: 1; }
+  50%      { opacity: 0.7; }
+}
+.loading-sub {
+  font-size: 11px; color: var(--text3); letter-spacing: 3px;
+  font-family: 'DotGothic16', monospace; text-transform: uppercase;
+}
 
-/* ── LOGIN ── */
+/* Progress dots */
+.loading-dots { display: flex; gap: 8px; }
+.loading-dot {
+  width: 8px; height: 8px; background: var(--panel3); border-radius: 50%;
+  animation: dot-pulse 1.2s ease-in-out infinite;
+}
+.loading-dot:nth-child(1) { animation-delay: 0s;    background: var(--sakura); }
+.loading-dot:nth-child(2) { animation-delay: 0.2s;  background: var(--gold); }
+.loading-dot:nth-child(3) { animation-delay: 0.4s;  background: var(--purple); }
+.loading-dot:nth-child(4) { animation-delay: 0.6s;  background: var(--mint); }
+@keyframes dot-pulse { 0%,100% { transform: scale(1); opacity:0.4; } 50% { transform: scale(1.4); opacity:1; } }
+
+/* ══════════════════════════════════════
+   LOGIN SCREEN
+══════════════════════════════════════ */
 #login-screen {
   display: none; position: fixed; inset: 0;
-  background: radial-gradient(ellipse at center, #0d1f35 0%, #050a12 100%);
+  background: radial-gradient(ellipse at 30% 40%, #2d1040 0%, #0d0814 60%);
   z-index: 9000; align-items: center; justify-content: center;
+  overflow: hidden;
 }
 #login-screen.visible { display: flex; }
 
-.login-card {
-  background: rgba(13,25,45,0.95);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 40px 32px;
-  width: 90%; max-width: 380px;
-  text-align: center;
-  box-shadow: var(--shadow), var(--glow);
-  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  position: relative; overflow: hidden;
-}
-.login-card::before {
+/* Anime bg effects */
+#login-screen::before {
   content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, transparent, var(--cyan), var(--gold), var(--cyan), transparent);
-  animation: shimmer 3s linear infinite;
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(circle, rgba(255,107,157,0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
-@keyframes shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
-}
-@keyframes popIn { from { transform: scale(0.85); opacity:0; } to { transform: scale(1); opacity:1; } }
 
-.login-mascot {
-  font-size: 52px; margin-bottom: 10px;
-  display: block; animation: pulse-glow 3s ease-in-out infinite;
-  filter: drop-shadow(0 0 12px var(--cyan));
+.login-card {
+  background: rgba(20,14,38,0.95);
+  border: var(--border-w) solid rgba(255,107,157,0.3);
+  border-radius: 4px;
+  padding: 36px 28px 28px;
+  width: 90%; max-width: 360px;
+  text-align: center;
+  box-shadow: var(--shadow), 0 0 40px rgba(255,107,157,0.15);
+  animation: slide-up 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative; overflow: visible;
 }
-@keyframes pulse-glow {
-  0%,100% { filter: drop-shadow(0 0 8px var(--cyan)); transform: translateY(0); }
-  50% { filter: drop-shadow(0 0 20px var(--cyan)); transform: translateY(-5px); }
+/* manga corners on login */
+.login-card::before, .login-card::after { display: none; }
+
+/* Top decoration bar */
+.login-topbar {
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--purple), var(--sakura), var(--gold), var(--mint), var(--sakura));
+  background-size: 200% 100%;
+  animation: bar-slide 3s linear infinite;
+}
+@keyframes bar-slide { to { background-position: 200% 0; } }
+
+@keyframes slide-up {
+  from { transform: translateY(30px) scale(0.92); opacity:0; }
+  to   { transform: translateY(0) scale(1); opacity:1; }
+}
+
+/* Character label above card */
+.login-char {
+  font-size: 52px; display: block; margin-bottom: 6px;
+  animation: float-char 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 16px var(--sakura));
+}
+@keyframes float-char {
+  0%,100% { transform: translateY(0) rotate(-3deg); }
+  50%      { transform: translateY(-10px) rotate(3deg); }
 }
 
 .login-title {
-  font-family: 'Orbitron', monospace;
-  font-size: 22px; color: var(--cyan);
-  margin-bottom: 4px; letter-spacing: 2px;
-  text-shadow: 0 0 20px var(--cyan);
+  font-family: 'Zen Dots', monospace;
+  font-size: 20px; color: var(--sakura);
+  margin-bottom: 2px; letter-spacing: 2px;
+  text-shadow: 0 0 20px var(--sakura);
 }
-.login-sub { font-size: 13px; color: var(--text2); margin-bottom: 24px; font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; }
+.login-jp {
+  font-family: 'DotGothic16', monospace;
+  font-size: 10px; color: var(--text3); margin-bottom: 18px; letter-spacing: 3px;
+}
 
 .login-tabs {
-  display: flex; margin-bottom: 18px;
-  background: rgba(0,0,0,0.3); border-radius: 8px; padding: 3px;
-  border: 1px solid var(--border2);
+  display: flex; margin-bottom: 14px;
+  background: rgba(0,0,0,0.4);
+  border-radius: 4px; padding: 3px;
+  border: 1px solid var(--border);
 }
 .login-tab {
-  flex: 1; padding: 8px; font-size: 13px; font-weight: 700;
+  flex: 1; padding: 8px; font-size: 12px; font-weight: 900;
   border: none; background: transparent; cursor: pointer; color: var(--text3);
-  border-radius: 6px; transition: all 0.2s; font-family: 'Exo 2', sans-serif;
-  letter-spacing: 0.5px;
+  border-radius: 3px; transition: all 0.2s;
+  font-family: 'Zen Dots', monospace; letter-spacing: 1px;
 }
 .login-tab.active {
-  background: rgba(0,212,255,0.15); color: var(--cyan);
-  box-shadow: 0 0 12px rgba(0,212,255,0.2);
-  border: 1px solid rgba(0,212,255,0.3);
+  background: rgba(255,107,157,0.15); color: var(--sakura);
+  box-shadow: 0 0 12px rgba(255,107,157,0.2);
+  border: 1px solid rgba(255,107,157,0.3);
 }
 
 .login-input {
-  width: 100%; padding: 11px 14px;
-  border: 1px solid var(--border2); border-radius: 8px;
-  font-size: 14px; color: var(--text); font-family: 'Exo 2', sans-serif;
-  outline: none; margin-bottom: 10px;
-  background: rgba(0,0,0,0.3);
+  width: 100%; padding: 10px 14px;
+  border: 1px solid var(--border); border-radius: 4px;
+  font-size: 13px; color: var(--text);
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  outline: none; margin-bottom: 8px;
+  background: rgba(0,0,0,0.4);
   transition: all 0.2s;
 }
 .login-input:focus {
-  border-color: var(--cyan);
-  box-shadow: 0 0 0 2px rgba(0,212,255,0.12), 0 0 12px rgba(0,212,255,0.1);
+  border-color: var(--sakura);
+  box-shadow: 0 0 0 2px rgba(255,107,157,0.1), 0 0 12px rgba(255,107,157,0.1);
 }
 
 .btn-login {
   width: 100%; padding: 13px;
-  background: linear-gradient(135deg, rgba(0,212,255,0.2) 0%, rgba(0,180,230,0.3) 100%);
-  color: var(--cyan); border: 1px solid var(--cyan); border-radius: 8px;
-  font-size: 14px; font-weight: 800; cursor: pointer;
-  font-family: 'Orbitron', monospace; transition: all 0.2s;
-  box-shadow: 0 0 20px rgba(0,212,255,0.2); margin-top: 4px;
+  background: linear-gradient(135deg, rgba(255,107,157,0.2), rgba(255,100,130,0.35));
+  color: var(--sakura); border: var(--border-w) solid var(--sakura); border-radius: 4px;
+  font-size: 13px; font-weight: 900; cursor: pointer;
+  font-family: 'Zen Dots', monospace; transition: all 0.2s;
+  box-shadow: 0 0 20px rgba(255,107,157,0.2); margin-top: 4px;
   letter-spacing: 2px; text-transform: uppercase;
+  position: relative; overflow: hidden;
 }
-.btn-login:hover { background: rgba(0,212,255,0.3); box-shadow: 0 0 30px rgba(0,212,255,0.4); transform: translateY(-2px); }
+.btn-login::after {
+  content: '';
+  position: absolute; top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  transition: left 0.4s;
+}
+.btn-login:hover::after { left: 100%; }
+.btn-login:hover { box-shadow: 0 0 30px rgba(255,107,157,0.45); transform: translateY(-2px); }
 .btn-login:active { transform: scale(0.98); }
 .btn-login:disabled { opacity: 0.4; cursor: not-allowed; }
 
-.login-err { font-size: 12px; color: var(--red); margin-top: 8px; min-height: 18px; text-align: left; font-weight: 600; }
+.login-err { font-size: 12px; color: var(--red); margin-top: 8px; min-height: 18px; text-align: left; font-weight: 700; }
 .btn-resend {
   padding: 8px 16px; background: transparent;
-  border: 1px solid var(--border); color: var(--cyan);
-  border-radius: 8px; font-size: 13px; font-weight: 700;
-  cursor: pointer; transition: all 0.15s; font-family: 'Exo 2', sans-serif;
+  border: 1px solid var(--border); color: var(--sakura);
+  border-radius: 4px; font-size: 12px; font-weight: 700;
+  cursor: pointer; transition: all 0.15s;
+  font-family: 'M PLUS Rounded 1c', sans-serif;
   display: inline-flex; align-items: center; gap: 6px;
 }
-.btn-resend:hover:not(:disabled) { background: var(--cyan-dim); }
+.btn-resend:hover:not(:disabled) { background: var(--sakura-dim); }
 .btn-resend:disabled { opacity: 0.3; cursor: not-allowed; }
-.login-footer { margin-top: 16px; font-size: 11px; color: var(--text3); font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; }
+.login-footer { margin-top: 16px; font-size: 10px; color: var(--text3); font-family: 'DotGothic16', monospace; letter-spacing: 2px; }
 
-/* ── LOADING ── */
-#loading-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(10,15,30,0.9); z-index: 8000;
-  align-items: center; justify-content: center; flex-direction: column; gap: 14px;
-}
-#loading-overlay.visible { display: flex; }
-.loader-mascot { font-size: 48px; animation: spin-glow 1.5s linear infinite; filter: drop-shadow(0 0 12px var(--cyan)); }
-@keyframes spin-glow { to { transform: rotate(360deg); } }
-.loading-text { font-size: 13px; color: var(--cyan); font-family: 'Orbitron', monospace; letter-spacing: 3px; text-transform: uppercase; }
-
-/* ── APP ── */
+/* ══════════════════════════════════════
+   APP LAYOUT
+══════════════════════════════════════ */
 .app { display: flex; flex-direction: column; min-height: 100vh; position: relative; z-index: 2; }
 
 /* ── TOPBAR ── */
 .topbar {
-  background: rgba(10,15,30,0.95);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--border);
-  padding: 10px 20px;
+  background: rgba(13,11,22,0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: var(--border-w) solid rgba(255,107,157,0.25);
+  padding: 10px 16px;
   display: flex; align-items: center; justify-content: space-between;
   position: sticky; top: 0; z-index: 100;
   box-shadow: 0 2px 20px rgba(0,0,0,0.5);
 }
+/* Speed lines under topbar */
 .topbar::after {
   content: '';
-  position: absolute; bottom: -1px; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  position: absolute; bottom: -2px; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent 5%, var(--sakura) 30%, var(--gold) 50%, var(--sakura) 70%, transparent 95%);
+  animation: bar-slide 4s linear infinite;
 }
+
 .topbar-brand {
-  font-family: 'Orbitron', monospace;
-  font-size: 16px; color: var(--cyan);
+  font-family: 'Zen Dots', monospace;
+  font-size: 14px; color: var(--sakura);
   display: flex; align-items: center; gap: 8px;
-  letter-spacing: 2px; text-shadow: 0 0 15px var(--cyan);
+  letter-spacing: 1.5px;
+  text-shadow: 0 0 15px var(--sakura);
 }
-.topbar-brand .brand-emoji { font-size: 20px; filter: drop-shadow(0 0 6px var(--cyan)); }
+.topbar-brand .brand-jp {
+  font-size: 10px; color: var(--text3);
+  font-family: 'DotGothic16', monospace;
+  letter-spacing: 1px;
+  display: none;
+}
+@media (min-width: 400px) { .topbar-brand .brand-jp { display: block; } }
+
 .topbar-right { display: flex; align-items: center; gap: 8px; }
-.topbar-date { font-size: 11px; color: var(--text3); font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; display: none; }
-@media (min-width: 400px) { .topbar-date { display: block; } }
+.topbar-date { font-size: 10px; color: var(--text3); font-family: 'DotGothic16', monospace; letter-spacing: 1px; display: none; }
+@media (min-width: 420px) { .topbar-date { display: block; } }
 
 .user-pill {
   display: flex; align-items: center; gap: 6px;
-  background: rgba(0,212,255,0.08); border-radius: 20px;
-  padding: 4px 10px 4px 4px; border: 1px solid var(--border2);
+  background: rgba(255,107,157,0.06); border-radius: 20px;
+  padding: 4px 10px 4px 4px; border: 1px solid rgba(255,107,157,0.2);
 }
 .user-avatar {
   width: 26px; height: 26px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--cyan3), var(--cyan));
-  color: var(--navy); font-size: 12px; font-weight: 900;
+  background: linear-gradient(135deg, var(--purple), var(--sakura));
+  color: white; font-size: 12px; font-weight: 900;
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Orbitron', monospace;
+  font-family: 'Zen Dots', monospace;
 }
-.user-name { font-size: 12px; font-weight: 700; color: var(--cyan); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: 'Rajdhani', sans-serif; letter-spacing: 0.5px; }
+.user-name { font-size: 11px; font-weight: 900; color: var(--sakura); max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: 'DotGothic16', monospace; }
 
 .btn-logout {
   padding: 6px 10px; background: transparent;
-  border: 1px solid var(--border); border-radius: 8px;
-  font-size: 12px; color: var(--text2); cursor: pointer;
+  border: 1px solid var(--border); border-radius: 4px;
+  font-size: 11px; color: var(--text2); cursor: pointer;
   display: flex; align-items: center; gap: 4px;
-  font-family: 'Exo 2', sans-serif; font-weight: 700;
+  font-family: 'M PLUS Rounded 1c', sans-serif; font-weight: 700;
   transition: all 0.15s;
 }
 .btn-logout:hover { background: var(--red-dim); border-color: var(--red); color: var(--red); }
 
 /* ── NAV ── */
 .nav {
-  background: rgba(10,15,30,0.9);
+  background: rgba(13,11,22,0.95);
   border-bottom: 1px solid var(--border);
-  display: flex; padding: 0 12px; overflow-x: auto;
+  display: flex; padding: 0 8px; overflow-x: auto;
+  gap: 2px;
 }
+.nav::-webkit-scrollbar { display: none; }
 .nav-btn {
-  padding: 12px 14px; font-size: 12px; font-weight: 700;
+  padding: 12px 13px; font-size: 11px; font-weight: 900;
   border: none; background: transparent; color: var(--text3);
-  cursor: pointer; border-bottom: 2px solid transparent;
+  cursor: pointer; border-bottom: 3px solid transparent;
   display: flex; align-items: center; gap: 5px;
   white-space: nowrap; transition: all 0.15s;
-  font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; text-transform: uppercase;
+  font-family: 'Zen Dots', monospace; letter-spacing: 0.5px;
 }
-.nav-btn.active { color: var(--cyan); border-bottom-color: var(--cyan); text-shadow: 0 0 10px var(--cyan); }
+.nav-btn.active { color: var(--sakura); border-bottom-color: var(--sakura); text-shadow: 0 0 10px var(--sakura); }
 .nav-btn:hover:not(.active) { color: var(--text); }
 
 /* ── CONTENT ── */
-.content { padding: 16px; flex: 1; max-width: 740px; margin: 0 auto; width: 100%; }
+.content { padding: 14px; flex: 1; max-width: 740px; margin: 0 auto; width: 100%; }
 .page { display: none; }
 .page.active { display: block; }
 
-/* ── CARDS ── */
+/* ══════════════════════════════════════
+   CARDS — MANGA PANEL STYLE
+══════════════════════════════════════ */
 .card {
   background: var(--panel);
-  border: 1px solid var(--border);
+  border: var(--border-w) solid rgba(255,107,157,0.2);
   border-radius: var(--radius);
   padding: 16px;
   margin-bottom: 14px;
-  position: relative; overflow: hidden;
-  box-shadow: var(--shadow);
+  position: relative; overflow: visible;
+  box-shadow: var(--shadow), inset 0 0 40px rgba(255,107,157,0.02);
 }
+/* Manga panel top line */
 .card::before {
   content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--cyan2), transparent);
-  opacity: 0.6;
+  position: absolute; top: 0; left: 0; right: 0; height: 2px; border-radius: 0;
+  background: linear-gradient(90deg, transparent, var(--sakura), transparent);
+  opacity: 0.5;
 }
-.card-title {
-  font-family: 'Orbitron', monospace;
-  font-size: 13px; color: var(--cyan);
-  margin-bottom: 16px;
-  display: flex; align-items: center; gap: 8px;
-  letter-spacing: 1.5px; text-transform: uppercase;
+/* Manga corners */
+.card::after {
+  content: '';
+  position: absolute;
+  top: -2px; left: -2px;
+  width: 12px; height: 12px;
+  border-top: 3px solid var(--sakura);
+  border-left: 3px solid var(--sakura);
+  pointer-events: none;
 }
-.card-title .title-emoji { font-size: 16px; }
 
-/* ── SALDO GRID ── */
-.saldo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.card-corner-br {
+  position: absolute; bottom: -2px; right: -2px;
+  width: 12px; height: 12px;
+  border-bottom: 3px solid var(--sakura);
+  border-right: 3px solid var(--sakura);
+  pointer-events: none;
+}
+
+.card-title {
+  font-family: 'Zen Dots', monospace;
+  font-size: 11px; color: var(--sakura);
+  margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+  letter-spacing: 2px; text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(255,107,157,0.5);
+}
+
+/* ══════════════════════════════════════
+   SALDO GRID
+══════════════════════════════════════ */
+.saldo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-bottom: 14px; }
+
 .saldo-card {
   background: var(--panel2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 12px 14px;
+  border: 1px solid rgba(255,107,157,0.15);
+  border-radius: var(--radius);
+  padding: 10px 12px;
   position: relative; overflow: hidden;
   transition: all 0.2s;
 }
 .saldo-card::before {
   content: '';
   position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--cyan3), transparent);
+  background: linear-gradient(90deg, transparent, var(--sakura), transparent);
+  opacity: 0;
+  transition: opacity 0.2s;
 }
-.saldo-card:hover { border-color: var(--cyan3); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,212,255,0.1); }
-.saldo-label { font-size: 10px; color: var(--text3); margin-bottom: 5px; display: flex; align-items: center; gap: 5px; font-weight: 700; font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
-.saldo-val { font-size: 14px; font-weight: 800; color: var(--text); font-family: 'Exo 2', sans-serif; }
+.saldo-card:hover { border-color: rgba(255,107,157,0.35); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(255,107,157,0.1); }
+.saldo-card:hover::before { opacity: 1; }
+
+/* Special card: total */
+.saldo-card.total-card {
+  background: linear-gradient(135deg, rgba(255,107,157,0.1), rgba(162,155,254,0.08));
+  border-color: rgba(255,107,157,0.3);
+  border-width: var(--border-w);
+}
+.saldo-card.total-card::after {
+  content: '★';
+  position: absolute; top: 6px; right: 8px;
+  font-size: 8px; color: var(--gold); opacity: 0.7;
+}
+
+.saldo-label { font-size: 9px; color: var(--text3); margin-bottom: 4px; display: flex; align-items: center; gap: 4px; font-weight: 700; font-family: 'DotGothic16', monospace; letter-spacing: 1px; text-transform: uppercase; }
+.saldo-val { font-size: 13px; font-weight: 900; color: var(--text); font-family: 'Zen Dots', monospace; }
 .saldo-val.utang { color: var(--red); }
+.saldo-val.total { color: var(--gold); text-shadow: 0 0 10px rgba(255,209,102,0.4); }
 
-/* ── TRX TABS ── */
-.trx-tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+/* ══════════════════════════════════════
+   TRX TABS
+══════════════════════════════════════ */
+.trx-tabs { display: flex; gap: 4px; margin-bottom: 14px; flex-wrap: wrap; }
 .trx-tab {
-  padding: 7px 13px; border-radius: 6px;
+  padding: 6px 12px; border-radius: var(--radius);
   border: 1px solid var(--border); background: transparent;
-  font-size: 12px; cursor: pointer; color: var(--text2);
-  transition: all 0.15s; display: flex; align-items: center; gap: 5px;
-  font-family: 'Rajdhani', sans-serif; font-weight: 700; white-space: nowrap;
-  letter-spacing: 0.5px;
+  font-size: 11px; cursor: pointer; color: var(--text2);
+  transition: all 0.15s; display: flex; align-items: center; gap: 4px;
+  font-family: 'M PLUS Rounded 1c', sans-serif; font-weight: 700; white-space: nowrap;
 }
-.trx-tab.active { background: rgba(0,212,255,0.12); color: var(--cyan); border-color: var(--cyan); box-shadow: 0 0 10px rgba(0,212,255,0.15); }
-.trx-tab:hover:not(.active) { background: var(--cyan-dim); border-color: var(--border); }
+.trx-tab.active {
+  background: rgba(255,107,157,0.1); color: var(--sakura);
+  border-color: var(--sakura); box-shadow: 0 0 10px rgba(255,107,157,0.15);
+}
+.trx-tab:hover:not(.active) { background: var(--sakura-dim); }
 
-/* ── FORMS ── */
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+/* ══════════════════════════════════════
+   FORMS
+══════════════════════════════════════ */
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
 .form-row.full { grid-template-columns: 1fr; }
-.form-group { display: flex; flex-direction: column; gap: 5px; }
-.form-group label { font-size: 11px; color: var(--text2); font-weight: 700; font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
+.form-group { display: flex; flex-direction: column; gap: 4px; }
+.form-group label { font-size: 10px; color: var(--text2); font-weight: 900; font-family: 'DotGothic16', monospace; letter-spacing: 1px; text-transform: uppercase; }
 .form-group input, .form-group select {
-  padding: 9px 12px;
-  border: 1px solid var(--border); border-radius: 8px;
-  font-size: 13px; background: rgba(0,0,0,0.3); color: var(--text);
-  outline: none; font-family: 'Exo 2', sans-serif; font-weight: 600;
+  padding: 9px 10px;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  font-size: 13px; background: rgba(0,0,0,0.35); color: var(--text);
+  outline: none; font-family: 'M PLUS Rounded 1c', sans-serif; font-weight: 700;
   transition: all 0.15s;
+  appearance: none; -webkit-appearance: none;
 }
-.form-group select option { background: var(--navy3); color: var(--text); }
+.form-group select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23ff6b9d'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+}
+.form-group select option { background: var(--ink3); color: var(--text); }
 .form-group input:focus, .form-group select:focus {
-  border-color: var(--cyan);
-  box-shadow: 0 0 0 2px rgba(0,212,255,0.1);
+  border-color: var(--sakura);
+  box-shadow: 0 0 0 2px rgba(255,107,157,0.1);
+  background: rgba(255,107,157,0.04);
 }
 
-.utang-toggle { display: flex; align-items: center; gap: 10px; margin: 12px 0 8px; cursor: pointer; user-select: none; }
+/* UTANG TOGGLE */
+.utang-toggle { display: flex; align-items: center; gap: 10px; margin: 10px 0 6px; cursor: pointer; user-select: none; }
 .toggle-box {
-  width: 36px; height: 20px; background: rgba(255,255,255,0.1); border-radius: 10px;
+  width: 34px; height: 18px; background: rgba(255,255,255,0.06); border-radius: 9px;
   position: relative; transition: background 0.2s; flex-shrink: 0;
   border: 1px solid var(--border);
 }
 .toggle-box::after {
   content: ''; position: absolute;
-  width: 14px; height: 14px; border-radius: 50%; background: var(--text3);
+  width: 12px; height: 12px; border-radius: 50%; background: var(--text3);
   top: 2px; left: 2px; transition: all 0.2s;
 }
-.toggle-box.on { background: rgba(0,212,255,0.2); border-color: var(--cyan); }
-.toggle-box.on::after { left: 18px; background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
-.toggle-label { font-size: 12px; color: var(--text2); font-weight: 700; font-family: 'Rajdhani', sans-serif; letter-spacing: 0.5px; }
+.toggle-box.on { background: rgba(255,107,157,0.2); border-color: var(--sakura); }
+.toggle-box.on::after { left: 18px; background: var(--sakura); box-shadow: 0 0 6px var(--sakura); }
+.toggle-label { font-size: 11px; color: var(--text2); font-weight: 700; font-family: 'M PLUS Rounded 1c', sans-serif; }
 
-.btn-submit {
-  width: 100%; padding: 12px;
-  background: linear-gradient(135deg, rgba(0,212,255,0.15) 0%, rgba(0,180,230,0.25) 100%);
-  color: var(--cyan); border: 1px solid var(--cyan); border-radius: 8px;
-  font-size: 13px; font-weight: 800; cursor: pointer;
-  margin-top: 10px; font-family: 'Orbitron', monospace;
-  box-shadow: 0 0 20px rgba(0,212,255,0.15);
-  transition: all 0.2s; letter-spacing: 2px; text-transform: uppercase;
-}
-.btn-submit:hover { background: rgba(0,212,255,0.25); box-shadow: 0 0 30px rgba(0,212,255,0.3); transform: translateY(-2px); }
-.btn-submit:active { transform: scale(0.99); }
-
-/* ── PRESET ── */
-.preset-label { font-size: 10px; font-weight: 800; color: var(--text3); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 8px; font-family: 'Rajdhani', sans-serif; }
-.preset-row { display: flex; gap: 7px; margin-bottom: 16px; flex-wrap: wrap; }
+/* PRESET */
+.preset-label { font-size: 9px; font-weight: 900; color: var(--text3); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px; font-family: 'DotGothic16', monospace; }
+.preset-row { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
 .preset-btn {
-  padding: 6px 12px; border-radius: 6px;
-  border: 1px solid rgba(255,215,0,0.3); background: rgba(255,215,0,0.06);
-  color: var(--gold); font-size: 12px; font-weight: 700; cursor: pointer;
-  transition: all 0.15s; display: flex; align-items: center; gap: 5px;
-  font-family: 'Rajdhani', sans-serif; white-space: nowrap; letter-spacing: 0.5px;
+  padding: 5px 11px; border-radius: var(--radius);
+  border: 1px solid rgba(255,209,102,0.3); background: rgba(255,209,102,0.06);
+  color: var(--gold); font-size: 11px; font-weight: 700; cursor: pointer;
+  transition: all 0.15s; display: flex; align-items: center; gap: 4px;
+  font-family: 'M PLUS Rounded 1c', sans-serif; white-space: nowrap;
 }
-.preset-btn:hover { background: rgba(255,215,0,0.15); border-color: var(--gold); transform: translateY(-1px); box-shadow: 0 0 10px rgba(255,215,0,0.2); }
+.preset-btn:hover { background: rgba(255,209,102,0.15); border-color: var(--gold); transform: translateY(-1px); box-shadow: var(--glow-gold); }
 
-/* ── PREVIEW ── */
+/* PREVIEW BOX */
 .preview-box {
   background: rgba(0,0,0,0.3);
-  border: 1px dashed var(--border); border-radius: 8px;
-  padding: 12px 14px; margin: 10px 0; font-size: 12px; color: var(--text2); display: none;
+  border: 1px dashed rgba(255,107,157,0.2); border-radius: var(--radius);
+  padding: 10px 12px; margin: 8px 0; font-size: 12px; color: var(--text2); display: none;
 }
 .preview-box.show { display: block; }
-.preview-row { display: flex; justify-content: space-between; padding: 4px 0; font-weight: 700; font-family: 'Rajdhani', sans-serif; font-size: 13px; letter-spacing: 0.3px; }
+.preview-row { display: flex; justify-content: space-between; padding: 3px 0; font-weight: 700; font-family: 'DotGothic16', monospace; font-size: 12px; }
 .preview-row strong { color: var(--text); }
 
-/* ── RIWAYAT ── */
-.riwayat-list { display: flex; flex-direction: column; gap: 8px; }
-.riwayat-item {
-  background: var(--panel);
-  border: 1px solid var(--border); border-radius: var(--radius-sm);
-  padding: 12px 14px;
-  transition: all 0.15s;
+/* SUBMIT BTN */
+.btn-submit {
+  width: 100%; padding: 12px;
+  background: linear-gradient(135deg, rgba(255,107,157,0.12), rgba(255,100,130,0.22));
+  color: var(--sakura); border: var(--border-w) solid var(--sakura); border-radius: var(--radius);
+  font-size: 12px; font-weight: 900; cursor: pointer;
+  margin-top: 10px; font-family: 'Zen Dots', monospace;
+  box-shadow: 0 0 20px rgba(255,107,157,0.12);
+  transition: all 0.2s; letter-spacing: 2px; text-transform: uppercase;
   position: relative; overflow: hidden;
 }
-.riwayat-item:hover { border-color: var(--cyan3); transform: translateX(3px); }
+.btn-submit::after {
+  content: '';
+  position: absolute; top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  transition: left 0.4s;
+}
+.btn-submit:hover::after { left: 100%; }
+.btn-submit:hover { box-shadow: 0 0 30px rgba(255,107,157,0.3); transform: translateY(-2px); }
+.btn-submit:active { transform: scale(0.99); }
+
+/* ══════════════════════════════════════
+   RIWAYAT
+══════════════════════════════════════ */
+.riwayat-list { display: flex; flex-direction: column; gap: 6px; }
+.riwayat-item {
+  background: var(--panel);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 11px 13px;
+  transition: all 0.15s;
+  position: relative; overflow: hidden;
+  display: flex; justify-content: space-between; align-items: flex-start;
+}
+.riwayat-item:hover { border-color: rgba(255,107,157,0.4); transform: translateX(3px); }
 .riwayat-item::before {
   content: '';
-  position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
-  background: var(--cyan); opacity: 0; transition: opacity 0.15s;
+  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--sakura); opacity: 0; transition: opacity 0.15s;
 }
 .riwayat-item:hover::before { opacity: 1; }
 .riwayat-left { flex: 1; }
-.riwayat-item { display: flex; justify-content: space-between; align-items: flex-start; }
-.riwayat-title { font-size: 13px; font-weight: 700; color: var(--text); font-family: 'Exo 2', sans-serif; }
-.riwayat-sub { font-size: 11px; color: var(--text2); margin-top: 3px; font-weight: 600; font-family: 'Rajdhani', sans-serif; letter-spacing: 0.3px; }
+.riwayat-title { font-size: 12px; font-weight: 700; color: var(--text); font-family: 'M PLUS Rounded 1c', sans-serif; }
+.riwayat-sub { font-size: 10px; color: var(--text2); margin-top: 2px; font-weight: 600; font-family: 'DotGothic16', monospace; }
 .riwayat-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; margin-left: 8px; }
-.riwayat-amount { font-size: 13px; font-weight: 800; font-family: 'Exo 2', sans-serif; }
-.amount-plus { color: var(--mint); text-shadow: 0 0 8px rgba(0,255,179,0.4); }
-.amount-minus { color: var(--red); text-shadow: 0 0 8px rgba(255,68,102,0.3); }
+.riwayat-amount { font-size: 13px; font-weight: 900; font-family: 'Zen Dots', monospace; }
+.amount-plus { color: var(--mint); text-shadow: 0 0 8px rgba(6,255,165,0.4); }
+.amount-minus { color: var(--red); text-shadow: 0 0 8px rgba(255,75,110,0.3); }
 
-/* ── SALDO TRACK CHIP ── */
-.saldo-track {
-  display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px;
-}
+/* SALDO TRACK */
+.saldo-track { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
 .saldo-chip {
   display: inline-flex; align-items: center; gap: 3px;
   background: rgba(0,0,0,0.3); border: 1px solid var(--border2);
-  border-radius: 4px; padding: 2px 7px;
+  border-radius: 3px; padding: 2px 6px;
   font-size: 10px; color: var(--text3);
-  font-family: 'Rajdhani', sans-serif; font-weight: 600; letter-spacing: 0.3px;
-  white-space: nowrap;
+  font-family: 'DotGothic16', monospace; white-space: nowrap;
 }
-.saldo-chip .chip-label { color: var(--text3); }
-.saldo-chip .chip-before { color: var(--text2); }
-.saldo-chip .chip-arrow { color: var(--text3); margin: 0 1px; font-size: 9px; }
-.saldo-chip .chip-after { font-weight: 800; }
-.chip-after.pos { color: var(--mint); }
-.chip-after.neg { color: var(--red); }
+.chip-after.pos { color: var(--mint); font-weight: 900; }
+.chip-after.neg { color: var(--red); font-weight: 900; }
 
-/* ── BADGES ── */
+/* BADGES */
 .badge {
-  font-size: 10px; font-weight: 800; padding: 2px 8px;
-  border-radius: 4px; display: inline-block; margin-top: 4px;
-  font-family: 'Rajdhani', sans-serif; letter-spacing: 0.5px; text-transform: uppercase;
+  font-size: 9px; font-weight: 900; padding: 2px 7px;
+  border-radius: 2px; display: inline-block;
+  font-family: 'DotGothic16', monospace; letter-spacing: 0.5px; text-transform: uppercase;
 }
-.badge-pulsa { background: rgba(0,212,255,0.1); color: var(--cyan); border: 1px solid rgba(0,212,255,0.2); }
-.badge-cashout { background: rgba(255,215,0,0.1); color: var(--gold); border: 1px solid rgba(255,215,0,0.2); }
-.badge-barang { background: rgba(0,255,179,0.08); color: var(--mint); border: 1px solid rgba(0,255,179,0.2); }
-.badge-pindah { background: rgba(150,120,255,0.1); color: #c0a0ff; border: 1px solid rgba(150,120,255,0.2); }
-.badge-utang { background: rgba(255,68,102,0.1); color: var(--red); border: 1px solid rgba(255,68,102,0.2); }
-.badge-bayar { background: rgba(0,255,179,0.08); color: var(--mint); border: 1px solid rgba(0,255,179,0.2); }
-.badge-tambah-saldo { background: rgba(0,212,255,0.08); color: var(--cyan2); border: 1px solid rgba(0,212,255,0.15); }
-.badge-cancel { background: rgba(255,255,255,0.05); color: var(--text3); border: 1px solid var(--border2); }
-.badge-pengeluaran { background: rgba(255,68,102,0.08); color: var(--red); border: 1px solid rgba(255,68,102,0.15); }
+.badge-pulsa      { background: rgba(116,185,255,0.1); color: var(--sky); border: 1px solid rgba(116,185,255,0.2); }
+.badge-cashout    { background: rgba(255,209,102,0.1); color: var(--gold); border: 1px solid rgba(255,209,102,0.2); }
+.badge-barang     { background: rgba(6,255,165,0.08); color: var(--mint); border: 1px solid rgba(6,255,165,0.2); }
+.badge-pindah     { background: rgba(162,155,254,0.1); color: var(--purple); border: 1px solid rgba(162,155,254,0.2); }
+.badge-utang      { background: rgba(255,75,110,0.1); color: var(--red); border: 1px solid rgba(255,75,110,0.2); }
+.badge-bayar      { background: rgba(6,255,165,0.08); color: var(--mint); border: 1px solid rgba(6,255,165,0.2); }
+.badge-tambah-saldo { background: rgba(255,107,157,0.08); color: var(--sakura2); border: 1px solid rgba(255,107,157,0.15); }
+.badge-cancel     { background: rgba(255,255,255,0.04); color: var(--text3); border: 1px solid var(--border2); }
+.badge-pengeluaran { background: rgba(255,75,110,0.08); color: var(--red); border: 1px solid rgba(255,75,110,0.15); }
 
-.btn-cancel-trx {
-  padding: 4px 10px; background: transparent;
-  border: 1px solid rgba(255,215,0,0.3); color: var(--gold); border-radius: 6px;
-  font-size: 11px; font-weight: 800; cursor: pointer;
-  display: flex; align-items: center; gap: 3px;
-  font-family: 'Rajdhani', sans-serif; transition: all 0.15s; white-space: nowrap;
-  letter-spacing: 0.5px;
-}
-.btn-cancel-trx:hover { background: var(--gold-glow); border-color: var(--gold); }
-
-/* ── CANCEL BANNER ── */
-.cancel-banner {
-  background: rgba(255,215,0,0.05);
-  border: 1px solid rgba(255,215,0,0.25); border-radius: var(--radius-sm);
-  padding: 12px 14px; margin-bottom: 14px;
-  display: flex; align-items: center; justify-content: space-between; gap: 10px;
-}
-.cancel-banner-title { font-size: 11px; font-weight: 800; color: var(--gold); font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
-.cancel-banner-sub { font-size: 11px; color: var(--text2); margin-top: 2px; font-weight: 600; font-family: 'Rajdhani', sans-serif; }
-
-/* ── UTANG LIST ── */
+/* ══════════════════════════════════════
+   UTANG
+══════════════════════════════════════ */
 .utang-list { display: flex; flex-direction: column; gap: 10px; }
 .utang-item {
   background: var(--panel);
@@ -504,233 +692,242 @@ body::after {
 }
 .utang-header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 16px; cursor: pointer; transition: background 0.15s;
+  padding: 13px 15px; cursor: pointer; transition: background 0.15s;
 }
-.utang-header:hover { background: rgba(0,212,255,0.04); }
+.utang-header:hover { background: rgba(255,107,157,0.03); }
 .utang-info { flex: 1; }
-.utang-name { font-size: 14px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 7px; font-family: 'Exo 2', sans-serif; }
-.utang-total-label { font-size: 10px; color: var(--text3); font-weight: 600; margin-top: 2px; font-family: 'Rajdhani', sans-serif; letter-spacing: 0.5px; text-transform: uppercase; }
-.utang-total-val { font-size: 15px; font-weight: 900; color: var(--red); text-shadow: 0 0 10px rgba(255,68,102,0.3); font-family: 'Exo 2', sans-serif; }
-.utang-header-right { display: flex; align-items: center; gap: 10px; }
+.utang-name { font-size: 13px; font-weight: 900; color: var(--text); display: flex; align-items: center; gap: 7px; font-family: 'M PLUS Rounded 1c', sans-serif; }
+.utang-total-label { font-size: 9px; color: var(--text3); font-weight: 600; margin-top: 2px; font-family: 'DotGothic16', monospace; letter-spacing: 1px; text-transform: uppercase; }
+.utang-total-val { font-size: 14px; font-weight: 900; color: var(--red); font-family: 'Zen Dots', monospace; }
+.utang-header-right { display: flex; align-items: center; gap: 8px; }
 
 .btn-bayar {
-  padding: 6px 13px; background: rgba(0,255,179,0.08);
-  border: 1px solid rgba(0,255,179,0.3); color: var(--mint); border-radius: 8px;
-  font-size: 12px; font-weight: 700; cursor: pointer;
-  transition: all 0.15s; font-family: 'Rajdhani', sans-serif;
-  display: flex; align-items: center; gap: 4px; letter-spacing: 0.5px;
+  padding: 6px 12px; background: rgba(6,255,165,0.07);
+  border: 1px solid rgba(6,255,165,0.3); color: var(--mint); border-radius: var(--radius);
+  font-size: 11px; font-weight: 700; cursor: pointer;
+  transition: all 0.15s; font-family: 'M PLUS Rounded 1c', sans-serif;
+  display: flex; align-items: center; gap: 4px;
 }
-.btn-bayar:hover { background: var(--mint-dim); box-shadow: 0 0 10px rgba(0,255,179,0.2); }
+.btn-bayar:hover { background: var(--mint-dim); box-shadow: 0 0 10px rgba(6,255,165,0.2); }
 
 .btn-expand {
-  width: 28px; height: 28px; border: 1px solid var(--border);
-  background: rgba(0,0,0,0.3); border-radius: 6px;
+  width: 26px; height: 26px; border: 1px solid var(--border);
+  background: rgba(0,0,0,0.3); border-radius: var(--radius);
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer; transition: all 0.2s; color: var(--text2); font-size: 13px;
+  cursor: pointer; transition: all 0.2s; color: var(--text2); font-size: 12px;
 }
-.btn-expand.open { background: rgba(0,212,255,0.1); border-color: var(--cyan); color: var(--cyan); transform: rotate(180deg); }
+.btn-expand.open { background: rgba(255,107,157,0.1); border-color: var(--sakura); color: var(--sakura); transform: rotate(180deg); }
 
 .utang-detail { display: none; border-top: 1px solid var(--border); background: rgba(0,0,0,0.2); }
 .utang-detail.open { display: block; }
-.utang-detail-header {
-  padding: 8px 16px;
-  font-size: 10px; font-weight: 800; color: var(--text3);
-  text-transform: uppercase; letter-spacing: 0.08em;
-  border-bottom: 1px solid var(--border2);
-  font-family: 'Rajdhani', sans-serif;
-}
-.utang-trx-item {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  padding: 10px 16px; border-bottom: 1px solid var(--border2); gap: 10px;
-}
+.utang-detail-header { padding: 7px 15px; font-size: 9px; font-weight: 900; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border2); font-family: 'DotGothic16', monospace; }
+.utang-trx-item { display: flex; align-items: flex-start; justify-content: space-between; padding: 9px 15px; border-bottom: 1px solid var(--border2); gap: 8px; }
 .utang-trx-item:last-child { border-bottom: none; }
-.utang-trx-left { flex: 1; }
-.utang-trx-desc { font-size: 12px; font-weight: 700; color: var(--text); font-family: 'Exo 2', sans-serif; }
-.utang-trx-tgl { font-size: 11px; color: var(--text3); margin-top: 2px; font-family: 'Rajdhani', sans-serif; }
-.utang-trx-right { text-align: right; }
-.utang-trx-jumlah { font-size: 13px; font-weight: 800; color: var(--red); font-family: 'Exo 2', sans-serif; }
-.utang-trx-type { font-size: 10px; font-weight: 700; color: var(--text3); margin-top: 2px; font-family: 'Rajdhani', sans-serif; }
-.utang-empty-trx { padding: 14px 16px; font-size: 13px; color: var(--text3); text-align: center; font-weight: 600; font-family: 'Rajdhani', sans-serif; }
+.utang-trx-desc { font-size: 12px; font-weight: 700; color: var(--text); font-family: 'M PLUS Rounded 1c', sans-serif; }
+.utang-trx-tgl { font-size: 10px; color: var(--text3); margin-top: 2px; font-family: 'DotGothic16', monospace; }
+.utang-trx-jumlah { font-size: 12px; font-weight: 900; color: var(--red); font-family: 'Zen Dots', monospace; }
+.utang-empty-trx { padding: 14px; font-size: 12px; color: var(--text3); text-align: center; font-family: 'DotGothic16', monospace; }
 
-/* ── BANK LIST ── */
-.bank-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+/* ══════════════════════════════════════
+   BANK LIST
+══════════════════════════════════════ */
+.bank-list { display: flex; flex-direction: column; gap: 7px; margin-bottom: 10px; }
 .bank-item {
   display: flex; align-items: center; justify-content: space-between;
-  background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 10px;
-  padding: 10px 14px; transition: border-color 0.15s;
+  background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 9px 12px; transition: border-color 0.15s;
 }
-.bank-item:hover { border-color: var(--cyan3); }
-.bank-item-left { display: flex; align-items: center; gap: 10px; }
-.bank-item-icon {
-  width: 34px; height: 34px; background: rgba(0,212,255,0.1);
-  border-radius: 8px; display: flex; align-items: center; justify-content: center;
-  font-size: 16px; border: 1px solid var(--border);
-}
-.bank-item-name { font-size: 13px; font-weight: 800; color: var(--text); font-family: 'Exo 2', sans-serif; }
-.bank-item-key { font-size: 11px; color: var(--text3); font-weight: 600; font-family: 'Rajdhani', sans-serif; }
-.bank-item-saldo { font-size: 13px; font-weight: 800; color: var(--cyan); font-family: 'Exo 2', sans-serif; }
+.bank-item:hover { border-color: rgba(255,107,157,0.3); }
+.bank-item-left { display: flex; align-items: center; gap: 9px; }
+.bank-item-icon { width: 30px; height: 30px; background: rgba(255,107,157,0.08); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; font-size: 14px; border: 1px solid var(--border); }
+.bank-item-name { font-size: 12px; font-weight: 900; color: var(--text); font-family: 'M PLUS Rounded 1c', sans-serif; }
+.bank-item-key { font-size: 10px; color: var(--text3); font-family: 'DotGothic16', monospace; }
+.bank-item-saldo { font-size: 12px; font-weight: 900; color: var(--sakura); font-family: 'Zen Dots', monospace; }
 .btn-del-bank {
-  width: 28px; height: 28px; border: 1px solid rgba(255,68,102,0.3);
-  background: transparent; border-radius: 6px; color: var(--red);
-  font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border: 1px solid rgba(255,75,110,0.3);
+  background: transparent; border-radius: var(--radius); color: var(--red);
+  font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;
   transition: all 0.15s;
 }
 .btn-del-bank:hover { background: var(--red-dim); }
 .btn-del-bank:disabled { opacity: 0.2; cursor: not-allowed; }
 
-/* ── MODALS ── */
+/* ══════════════════════════════════════
+   CANCEL BANNER
+══════════════════════════════════════ */
+.cancel-banner {
+  background: rgba(255,209,102,0.04);
+  border: 1px solid rgba(255,209,102,0.2); border-radius: var(--radius);
+  padding: 11px 13px; margin-bottom: 12px;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+}
+.cancel-banner-title { font-size: 10px; font-weight: 900; color: var(--gold); font-family: 'DotGothic16', monospace; letter-spacing: 1px; text-transform: uppercase; }
+.cancel-banner-sub { font-size: 11px; color: var(--text2); margin-top: 2px; font-weight: 600; font-family: 'DotGothic16', monospace; }
+.btn-cancel-trx {
+  padding: 5px 10px; background: transparent;
+  border: 1px solid rgba(255,209,102,0.3); color: var(--gold); border-radius: var(--radius);
+  font-size: 10px; font-weight: 900; cursor: pointer;
+  display: flex; align-items: center; gap: 3px;
+  font-family: 'DotGothic16', monospace; transition: all 0.15s;
+}
+.btn-cancel-trx:hover { background: var(--gold-glow); }
+
+/* ══════════════════════════════════════
+   MODALS
+══════════════════════════════════════ */
 .modal-overlay {
   display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.7); z-index: 500;
-  align-items: center; justify-content: center; backdrop-filter: blur(4px);
+  background: rgba(0,0,0,0.75); z-index: 500;
+  align-items: center; justify-content: center; backdrop-filter: blur(6px);
 }
 .modal-overlay.open { display: flex; }
 .modal {
-  background: var(--panel2); border-radius: 16px; padding: 24px;
-  width: 90%; max-width: 360px;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow), var(--glow);
-  animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background: var(--panel2); border-radius: var(--radius);
+  padding: 24px; width: 90%; max-width: 340px;
+  border: var(--border-w) solid rgba(255,107,157,0.3);
+  box-shadow: var(--shadow), var(--glow-pink);
+  animation: slide-up 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative; overflow: hidden;
 }
 .modal::before {
   content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--purple), var(--sakura), var(--gold));
 }
-.modal-emoji { font-size: 36px; text-align: center; display: block; margin-bottom: 8px; }
-.modal-title { font-family: 'Orbitron', monospace; font-size: 18px; color: var(--cyan); margin-bottom: 6px; text-align: center; letter-spacing: 1px; }
-.modal-sub { font-size: 13px; color: var(--text2); margin-bottom: 16px; text-align: center; font-weight: 600; font-family: 'Rajdhani', sans-serif; }
+.modal-emoji { font-size: 34px; text-align: center; display: block; margin-bottom: 6px; }
+.modal-title { font-family: 'Zen Dots', monospace; font-size: 16px; color: var(--sakura); margin-bottom: 6px; text-align: center; letter-spacing: 1px; }
+.modal-sub { font-size: 12px; color: var(--text2); margin-bottom: 14px; text-align: center; font-family: 'M PLUS Rounded 1c', sans-serif; }
 .modal-detail {
-  background: rgba(0,0,0,0.3); border: 1px dashed rgba(255,215,0,0.3);
-  border-radius: 8px; padding: 10px 12px;
-  font-size: 12px; color: var(--text2); font-weight: 700; margin-bottom: 8px;
-  white-space: pre-line; font-family: 'Rajdhani', sans-serif; letter-spacing: 0.3px;
+  background: rgba(0,0,0,0.3); border: 1px dashed rgba(255,209,102,0.25);
+  border-radius: var(--radius); padding: 10px 12px;
+  font-size: 11px; color: var(--text2); font-weight: 700; margin-bottom: 8px;
+  white-space: pre-line; font-family: 'DotGothic16', monospace;
 }
-.modal-actions { display: flex; gap: 10px; margin-top: 16px; }
+.modal-actions { display: flex; gap: 8px; margin-top: 14px; }
 .btn-cancel-modal {
-  flex: 1; padding: 11px; border: 1px solid var(--border);
-  background: transparent; border-radius: 8px; font-size: 13px;
-  cursor: pointer; color: var(--text2); font-family: 'Rajdhani', sans-serif; font-weight: 700;
-  transition: background 0.15s; letter-spacing: 0.5px;
+  flex: 1; padding: 10px; border: 1px solid var(--border);
+  background: transparent; border-radius: var(--radius); font-size: 12px;
+  cursor: pointer; color: var(--text2); font-family: 'M PLUS Rounded 1c', sans-serif; font-weight: 700;
+  transition: background 0.15s;
 }
 .btn-cancel-modal:hover { background: rgba(255,255,255,0.05); }
 .btn-confirm {
-  flex: 1; padding: 11px;
-  background: rgba(0,212,255,0.15); color: var(--cyan);
-  border: 1px solid var(--cyan); border-radius: 8px;
-  font-size: 12px; font-weight: 800; cursor: pointer;
-  font-family: 'Orbitron', monospace; transition: all 0.15s;
-  letter-spacing: 1px; text-transform: uppercase;
+  flex: 1; padding: 10px;
+  background: rgba(255,107,157,0.14); color: var(--sakura);
+  border: 1px solid var(--sakura); border-radius: var(--radius);
+  font-size: 11px; font-weight: 900; cursor: pointer;
+  font-family: 'Zen Dots', monospace; transition: all 0.15s; letter-spacing: 1px; text-transform: uppercase;
 }
-.btn-confirm:hover { background: rgba(0,212,255,0.25); box-shadow: 0 0 15px rgba(0,212,255,0.2); }
-.btn-confirm.danger { background: rgba(255,68,102,0.15); color: var(--red); border-color: var(--red); }
-.btn-confirm.danger:hover { background: rgba(255,68,102,0.25); box-shadow: 0 0 15px rgba(255,68,102,0.2); }
-.btn-confirm.amber { background: rgba(255,215,0,0.12); color: var(--gold); border-color: var(--gold); }
-.btn-confirm.amber:hover { background: rgba(255,215,0,0.2); box-shadow: 0 0 15px rgba(255,215,0,0.2); }
+.btn-confirm:hover { background: rgba(255,107,157,0.25); box-shadow: var(--glow-pink); }
+.btn-confirm.danger { background: rgba(255,75,110,0.14); color: var(--red); border-color: var(--red); }
+.btn-confirm.danger:hover { background: rgba(255,75,110,0.25); box-shadow: 0 0 15px rgba(255,75,110,0.3); }
+.btn-confirm.amber { background: rgba(255,209,102,0.1); color: var(--gold); border-color: var(--gold); }
+.btn-confirm.amber:hover { background: rgba(255,209,102,0.2); box-shadow: var(--glow-gold); }
 
-/* modal input */
 .modal-input {
-  border: 1px solid var(--border); border-radius: 8px; padding: 9px 12px;
-  font-family: 'Exo 2', sans-serif; font-size: 13px; font-weight: 700;
-  width: 100%; outline: none; background: rgba(0,0,0,0.3); color: var(--text);
+  border: 1px solid var(--border); border-radius: var(--radius); padding: 9px 12px;
+  font-family: 'M PLUS Rounded 1c', sans-serif; font-size: 13px; font-weight: 700;
+  width: 100%; outline: none; background: rgba(0,0,0,0.35); color: var(--text);
   transition: all 0.15s;
 }
-.modal-input:focus { border-color: var(--cyan); box-shadow: 0 0 0 2px rgba(0,212,255,0.1); }
-.modal-label { font-size: 11px; color: var(--text2); font-weight: 700; margin-bottom: 5px; display: block; font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
+.modal-input:focus { border-color: var(--sakura); box-shadow: 0 0 0 2px rgba(255,107,157,0.1); }
+.modal-label { font-size: 10px; color: var(--text2); font-weight: 700; margin-bottom: 5px; display: block; font-family: 'DotGothic16', monospace; letter-spacing: 1px; text-transform: uppercase; }
 
-/* ── TOAST ── */
+/* ══════════════════════════════════════
+   TOAST
+══════════════════════════════════════ */
 .toast {
   position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-  background: rgba(0,212,255,0.15); border: 1px solid var(--cyan);
-  color: var(--cyan); padding: 10px 22px; border-radius: 24px;
-  font-size: 12px; font-weight: 700; z-index: 9999;
+  background: rgba(255,107,157,0.12); border: 1px solid var(--sakura);
+  color: var(--sakura); padding: 9px 20px; border-radius: 20px;
+  font-size: 11px; font-weight: 700; z-index: 9999;
   opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap;
-  box-shadow: 0 0 20px rgba(0,212,255,0.3);
-  font-family: 'Rajdhani', sans-serif; letter-spacing: 1px;
+  box-shadow: var(--glow-pink);
+  font-family: 'DotGothic16', monospace; letter-spacing: 1px;
   backdrop-filter: blur(8px);
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
 
-/* ── MISC ── */
-.empty-state { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 14px; font-weight: 700; font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; }
-.empty-state .empty-emoji { font-size: 44px; display: block; margin-bottom: 10px; filter: grayscale(0.5); }
+/* ══════════════════════════════════════
+   MISC
+══════════════════════════════════════ */
+.empty-state { text-align: center; padding: 36px 20px; color: var(--text3); font-size: 12px; font-weight: 700; font-family: 'DotGothic16', monospace; letter-spacing: 2px; }
+.empty-state .empty-emoji { font-size: 40px; display: block; margin-bottom: 10px; filter: grayscale(0.5); }
 
-.filter-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.filter-row { display: flex; gap: 7px; margin-bottom: 12px; flex-wrap: wrap; }
 .filter-row select, .filter-row input {
-  padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px;
-  font-size: 12px; background: rgba(0,0,0,0.3); color: var(--text);
-  outline: none; flex: 1; min-width: 120px;
-  font-family: 'Rajdhani', sans-serif; font-weight: 600; letter-spacing: 0.3px;
+  padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius);
+  font-size: 11px; background: rgba(0,0,0,0.3); color: var(--text);
+  outline: none; flex: 1; min-width: 110px;
+  font-family: 'DotGothic16', monospace;
 }
-.filter-row select option { background: var(--navy3); }
-.filter-row input:focus, .filter-row select:focus { border-color: var(--cyan); }
+.filter-row select option { background: var(--ink3); }
+.filter-row input:focus, .filter-row select:focus { border-color: var(--sakura); }
 
 .section-header {
-  font-family: 'Orbitron', monospace;
-  font-size: 12px; color: var(--cyan); margin-bottom: 14px;
+  font-family: 'Zen Dots', monospace;
+  font-size: 11px; color: var(--sakura); margin-bottom: 12px;
   display: flex; align-items: center; gap: 6px;
-  letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 0 10px var(--cyan);
+  letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 0 10px var(--sakura);
 }
-.divider { height: 1px; background: var(--border); margin: 18px 0; border-radius: 2px; }
+.divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 16px 0; }
 
-.export-row { display: flex; gap: 8px; margin-bottom: 14px; }
+.export-row { display: flex; gap: 7px; margin-bottom: 12px; }
 .btn-export {
-  padding: 8px 13px; border: 1px solid var(--border); background: rgba(0,0,0,0.2);
-  border-radius: 8px; font-size: 11px; cursor: pointer; color: var(--text2);
-  display: flex; align-items: center; gap: 5px;
-  font-family: 'Rajdhani', sans-serif; font-weight: 700;
+  padding: 7px 12px; border: 1px solid var(--border); background: rgba(0,0,0,0.2);
+  border-radius: var(--radius); font-size: 10px; cursor: pointer; color: var(--text2);
+  display: flex; align-items: center; gap: 4px;
+  font-family: 'DotGothic16', monospace; font-weight: 700;
   transition: all 0.15s; letter-spacing: 0.5px;
 }
-.btn-export:hover { border-color: var(--cyan3); color: var(--cyan); background: var(--cyan-dim); }
+.btn-export:hover { border-color: var(--sakura); color: var(--sakura); background: var(--sakura-dim); }
 
-.summary-row { display: flex; gap: 10px; margin-bottom: 16px; }
+.summary-row { display: flex; gap: 8px; margin-bottom: 14px; }
 .summary-pill {
   background: var(--panel); border: 1px solid var(--border);
-  border-radius: 10px; padding: 10px 14px;
-  font-size: 11px; color: var(--text2); flex: 1; text-align: center; font-weight: 700;
-  font-family: 'Rajdhani', sans-serif; letter-spacing: 0.5px; text-transform: uppercase;
+  border-radius: var(--radius); padding: 10px 12px;
+  font-size: 9px; color: var(--text2); flex: 1; text-align: center; font-weight: 700;
+  font-family: 'DotGothic16', monospace; letter-spacing: 1px; text-transform: uppercase;
 }
-.summary-pill strong { display: block; font-size: 18px; font-weight: 900; color: var(--text); margin-top: 2px; font-family: 'Exo 2', sans-serif; }
-.summary-pill.profit strong { color: var(--mint); text-shadow: 0 0 10px rgba(0,255,179,0.3); }
+.summary-pill strong { display: block; font-size: 16px; font-weight: 900; color: var(--text); margin-top: 2px; font-family: 'Zen Dots', monospace; }
+.summary-pill.profit strong { color: var(--mint); text-shadow: 0 0 10px rgba(6,255,165,0.3); }
 
-/* ── ADD BANK INPUT ── */
-.add-bank-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.add-bank-row { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 8px; }
 .add-bank-input {
   flex: 1; padding: 9px 12px; border: 1px solid var(--border);
-  border-radius: 8px; font-size: 13px; color: var(--text);
-  font-family: 'Exo 2', sans-serif; font-weight: 600;
-  outline: none; min-width: 150px; background: rgba(0,0,0,0.3);
+  border-radius: var(--radius); font-size: 12px; color: var(--text);
+  font-family: 'M PLUS Rounded 1c', sans-serif; font-weight: 700;
+  outline: none; min-width: 140px; background: rgba(0,0,0,0.3);
   transition: all 0.15s;
 }
-.add-bank-input:focus { border-color: var(--cyan); }
+.add-bank-input:focus { border-color: var(--sakura); }
 .add-bank-input::placeholder { color: var(--text3); }
-
-.note-text { font-size: 11px; color: var(--text3); margin-top: 8px; font-weight: 600; font-family: 'Rajdhani', sans-serif; letter-spacing: 0.3px; }
+.note-text { font-size: 10px; color: var(--text3); margin-top: 6px; font-family: 'DotGothic16', monospace; }
 
 @media (max-width: 480px) {
   .form-row { grid-template-columns: 1fr; }
   .content { padding: 10px; }
   .saldo-grid { grid-template-columns: repeat(2, 1fr); }
-  .saldo-track { flex-direction: column; gap: 3px; }
 }
 </style>
 </head>
 <body>
 
-<div class="scan-overlay"></div>
-<div class="deco">⚡</div>
-<div class="deco">◈</div>
-<div class="deco">◇</div>
-<div class="deco">⬡</div>
-<div class="deco">✦</div>
+<!-- ── SAKURA PETALS ── -->
+<div class="sakura-container">
+  <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+  <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+  <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+  <div class="petal"></div>
+</div>
 
 <!-- ══════════════ LOGIN ══════════════ -->
 <div id="login-screen">
   <div class="login-card">
-    <span class="login-mascot">⚡</span>
+    <div class="login-topbar"></div>
+    <span class="login-char">⚡</span>
     <div class="login-title">KONTER MONITOR</div>
-    <div class="login-sub">SISTEM MANAJEMEN KONTER v2.0</div>
+    <div class="login-jp">コンター監視システム v2.0</div>
     <div class="login-tabs">
       <button class="login-tab active" id="tab-masuk" onclick="switchLoginTab('masuk')">LOGIN</button>
       <button class="login-tab" id="tab-daftar" onclick="switchLoginTab('daftar')">REGISTER</button>
@@ -741,27 +938,38 @@ body::after {
     <button class="btn-login" id="btn-login-submit" onclick="submitLogin()">
       <span id="btn-login-label">MASUK</span>
     </button>
-    <div id="resend-box" style="display:none; margin-top:14px; text-align:center;">
-      <div style="font-size:12px; color:var(--text2); margin-bottom:8px; font-family:'Rajdhani',sans-serif; letter-spacing:0.5px;">Belum dapat emailnya?</div>
-      <button class="btn-resend" id="btn-resend" onclick="resendEmail()">📧 Kirim ulang email</button>
-      <div id="resend-countdown" style="font-size:11px; color:var(--text3); margin-top:6px; font-family:'Rajdhani',sans-serif;"></div>
+    <div id="resend-box" style="display:none; margin-top:12px; text-align:center;">
+      <div style="font-size:11px; color:var(--text2); margin-bottom:8px; font-family:'DotGothic16',monospace;">Belum dapat email?</div>
+      <button class="btn-resend" id="btn-resend" onclick="resendEmail()">📧 Kirim Ulang</button>
+      <div id="resend-countdown" style="font-size:10px; color:var(--text3); margin-top:6px; font-family:'DotGothic16',monospace;"></div>
     </div>
-    <div class="login-footer">SECURE · ENCRYPTED · FREE FOREVER</div>
+    <div class="login-footer">桜 SECURE · ENCRYPTED · FREE FOREVER 桜</div>
   </div>
 </div>
 
 <!-- ══════════════ LOADING ══════════════ -->
 <div id="loading-overlay">
-  <div class="loader-mascot">⚡</div>
-  <div class="loading-text">LOADING DATA...</div>
+  <div class="loader-art">
+    <div class="loader-ring"></div>
+    <div class="loader-ring2"></div>
+    <div class="loader-chibi">🌸</div>
+  </div>
+  <div class="loading-title">LOADING...</div>
+  <div class="loading-sub">データを読み込み中</div>
+  <div class="loading-dots">
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+  </div>
 </div>
 
 <!-- ══════════════ APP ══════════════ -->
 <div class="app">
   <div class="topbar">
     <div class="topbar-brand">
-      <span class="brand-emoji">⚡</span>
-      DASBOARD HS KONTER
+      ⚡ KONTER
+      <span class="brand-jp">コンター監視</span>
     </div>
     <div class="topbar-right">
       <div class="topbar-date" id="topbar-date"></div>
@@ -770,34 +978,35 @@ body::after {
         <span class="user-name" id="user-name"></span>
       </div>
       <button class="btn-logout" id="btn-logout" style="display:none" onclick="logout()">
-        <i class="ti ti-logout"></i> KELUAR
+        ⛩ KELUAR
       </button>
     </div>
   </div>
 
   <nav class="nav">
-    <button class="nav-btn active" onclick="showPage('trx',this)">✏ ENTRY TRX</button>
-    <button class="nav-btn" onclick="showPage('saldo',this)">◈ CEK SALDO</button>
+    <button class="nav-btn active" onclick="showPage('trx',this)">✏ TRX</button>
+    <button class="nav-btn" onclick="showPage('saldo',this)">◈ SALDO</button>
     <button class="nav-btn" onclick="showPage('riwayat',this)">◎ RIWAYAT</button>
     <button class="nav-btn" onclick="showPage('utang',this)">⬡ UTANG</button>
   </nav>
 
   <div class="content">
 
-    <!-- PAGE: ENTRY TRX -->
+    <!-- PAGE: TRX -->
     <div class="page active" id="page-trx">
       <div class="cancel-banner" id="cancel-banner" style="display:none">
         <div>
           <div class="cancel-banner-title">⚡ BATALKAN TRANSAKSI TERAKHIR</div>
           <div class="cancel-banner-sub" id="cancel-banner-sub">—</div>
         </div>
-        <button class="btn-cancel-trx" onclick="openCancelTrx()"><i class="ti ti-x"></i> CANCEL</button>
+        <button class="btn-cancel-trx" onclick="openCancelTrx()">✕ CANCEL</button>
       </div>
 
       <div class="saldo-grid" id="mini-saldo"></div>
 
       <div class="card">
-        <div class="card-title"><span class="title-emoji">✏</span> TAMBAH TRANSAKSI</div>
+        <div class="card-corner-br"></div>
+        <div class="card-title">✏ TAMBAH TRANSAKSI</div>
         <div class="trx-tabs">
           <button class="trx-tab active" onclick="setTrxType('pulsa',this)">📶 PULSA</button>
           <button class="trx-tab" onclick="setTrxType('cashout',this)">💵 CASH OUT</button>
@@ -836,7 +1045,7 @@ body::after {
           <button class="btn-submit" onclick="submitPulsa()">⚡ SIMPAN TRANSAKSI PULSA</button>
         </div>
 
-        <!-- CASHOUT -->
+        <!-- CASHOUT — fee → profit -->
         <div id="form-cashout" style="display:none">
           <div class="form-row">
             <div class="form-group"><label>📝 Nama Transaksi</label><input type="text" id="co-nama" placeholder="Cth: Cashout Budi"></div>
@@ -844,7 +1053,7 @@ body::after {
           </div>
           <div class="form-row">
             <div class="form-group"><label>💵 Total Cash Out (Rp)</label><input type="number" id="co-total" placeholder="0" oninput="updateCashoutPreview()"></div>
-            <div class="form-group"><label>💸 Fee (Rp)</label><input type="number" id="co-fee" placeholder="0" oninput="updateCashoutPreview()"></div>
+            <div class="form-group"><label>💹 Profit (Rp)</label><input type="number" id="co-fee" placeholder="0" oninput="updateCashoutPreview()"></div>
           </div>
           <div class="utang-toggle" onclick="toggleUtang('cashout')">
             <div class="toggle-box" id="toggle-utang-cashout"></div>
@@ -855,7 +1064,8 @@ body::after {
           </div>
           <div class="preview-box show" id="preview-cashout">
             <div class="preview-row"><span>💸 Cash berkurang</span><strong id="co-pv-cash" style="color:var(--red)">—</strong></div>
-            <div class="preview-row"><span>💰 Dana bertambah (fee + modal)</span><strong id="co-pv-dana" style="color:var(--mint)">—</strong></div>
+            <div class="preview-row"><span>💹 Profit (masuk ke Cash)</span><strong id="co-pv-profit" style="color:var(--mint)">—</strong></div>
+            <div class="preview-row"><span>💰 Dana bertambah (total + profit)</span><strong id="co-pv-dana" style="color:var(--mint)">—</strong></div>
           </div>
           <button class="btn-submit" onclick="submitCashout()">⚡ SIMPAN CASH OUT</button>
         </div>
@@ -899,7 +1109,8 @@ body::after {
       <div class="saldo-grid" id="saldo-detail"></div>
       <div class="divider"></div>
       <div class="card">
-        <div class="card-title"><span class="title-emoji">➕</span> TAMBAH SALDO</div>
+        <div class="card-corner-br"></div>
+        <div class="card-title">➕ TAMBAH SALDO</div>
         <div class="form-row">
           <div class="form-group"><label>🏦 Akun Tujuan</label><select id="ts-to"></select></div>
           <div class="form-group"><label>💰 Jumlah (Rp)</label><input type="number" id="ts-jumlah" placeholder="0"></div>
@@ -911,18 +1122,20 @@ body::after {
       </div>
       <div class="divider"></div>
       <div class="card">
-        <div class="card-title"><span class="title-emoji">🏦</span> KELOLA AKUN SALDO</div>
+        <div class="card-corner-br"></div>
+        <div class="card-title">🏦 KELOLA AKUN SALDO</div>
         <div class="bank-list" id="bank-list"></div>
         <div class="add-bank-row">
           <input class="add-bank-input" type="text" id="new-bank-name" placeholder="Nama akun baru (cth: BRI, OVO...)"
             onkeydown="if(event.key==='Enter') submitTambahBank()">
-          <button class="btn-submit" style="width:auto; padding:9px 18px; margin-top:0;" onclick="submitTambahBank()">➕ TAMBAH</button>
+          <button class="btn-submit" style="width:auto; padding:9px 16px; margin-top:0;" onclick="submitTambahBank()">➕ TAMBAH</button>
         </div>
-        <div class="note-text">* Akun default (Cash, Dana, Agen Pulsa, Digipos, Sea Bank) tidak bisa dihapus.</div>
+        <div class="note-text">* Akun default tidak bisa dihapus.</div>
       </div>
       <div class="divider"></div>
       <div class="card">
-        <div class="card-title"><span class="title-emoji">🔄</span> PINDAH SALDO</div>
+        <div class="card-corner-br"></div>
+        <div class="card-title">🔄 PINDAH SALDO</div>
         <div class="form-row">
           <div class="form-group"><label>📤 Dari</label><select id="ps-from"></select></div>
           <div class="form-group"><label>📥 Ke</label><select id="ps-to"></select></div>
@@ -1033,17 +1246,17 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
 ═══════════════════════════════════════════ */
 const DEFAULT_BANKS = ['cash','dana','agen_pulsa','digipos','sea_bank'];
 const DEFAULT_LABELS = { cash:'Cash', dana:'Dana', agen_pulsa:'Agen Pulsa', digipos:'Digipos', sea_bank:'Sea Bank' };
-const DEFAULT_ICONS  = { cash:'ti-cash', dana:'ti-credit-card', agen_pulsa:'ti-sim-card-2', digipos:'ti-device-tablet', sea_bank:'ti-building-bank' };
+const DEFAULT_ICONS  = { cash:'💵', dana:'💳', agen_pulsa:'📶', digipos:'📟', sea_bank:'🏦' };
 const BANK_EMOJIS    = { cash:'💵', dana:'💳', agen_pulsa:'📶', digipos:'📟', sea_bank:'🏦' };
 
 const defaultState = {
   saldo: { cash:0, dana:0, agen_pulsa:0, digipos:0, sea_bank:0 },
   banks: [
-    {key:'cash',      label:'Cash',       icon:'ti-cash',           custom:false},
-    {key:'dana',      label:'Dana',       icon:'ti-credit-card',    custom:false},
-    {key:'agen_pulsa',label:'Agen Pulsa', icon:'ti-sim-card-2',     custom:false},
-    {key:'digipos',   label:'Digipos',    icon:'ti-device-tablet',  custom:false},
-    {key:'sea_bank',  label:'Sea Bank',   icon:'ti-building-bank',  custom:false},
+    {key:'cash',      label:'Cash',       icon:'💵', custom:false},
+    {key:'dana',      label:'Dana',       icon:'💳', custom:false},
+    {key:'agen_pulsa',label:'Agen Pulsa', icon:'📶', custom:false},
+    {key:'digipos',   label:'Digipos',    icon:'📟', custom:false},
+    {key:'sea_bank',  label:'Sea Bank',   icon:'🏦', custom:false},
   ],
   riwayat: [], utang: [],
   utangState: { pulsa:false, cashout:false, barang:false }
@@ -1056,30 +1269,28 @@ let currentUser = null, stateRowId = null;
    HELPERS
 ═══════════════════════════════════════════ */
 function getBankLabel(key) { return (state.banks.find(b=>b.key===key)||{}).label || key; }
-function getBankEmoji(key) { return BANK_EMOJIS[key] || '🏦'; }
+function getBankEmoji(key) { return BANK_EMOJIS[key] || (state.banks.find(b=>b.key===key)||{}).icon || '🏦'; }
 function fmt(n) { return 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
 function now() { return new Date().toLocaleString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
 function nowDate() { return new Date().toISOString().slice(0,10); }
 
-// Snapshot semua saldo sebelum transaksi
+function getTotalSaldo() {
+  return state.banks.reduce((sum, b) => sum + (state.saldo[b.key] || 0), 0);
+}
+
 function snapshotSaldo() {
   const snap = {};
   state.banks.forEach(b => { snap[b.key] = state.saldo[b.key] || 0; });
   return snap;
 }
 
-// Buat chip saldo tracking dari snapshot sebelum & sesudah
 function buildSaldoChips(snapBefore, snapAfter) {
   const chips = [];
-  const keys = Object.keys(snapAfter);
-  keys.forEach(k => {
+  Object.keys(snapAfter).forEach(k => {
     const before = snapBefore[k] || 0;
     const after  = snapAfter[k]  || 0;
     if (before !== after) {
-      const delta = after - before;
-      const dir = delta > 0 ? 'pos' : 'neg';
-      const label = getBankLabel(k);
-      chips.push({ key:k, label, before, after, delta, dir });
+      chips.push({ key:k, label:getBankLabel(k), before, after, delta:after-before, dir:after-before>0?'pos':'neg' });
     }
   });
   return chips;
@@ -1089,9 +1300,9 @@ function renderSaldoChips(chips) {
   if (!chips || !chips.length) return '';
   return `<div class="saldo-track">${chips.map(c=>`
     <div class="saldo-chip">
-      <span class="chip-label">${getBankEmoji(c.key)} ${c.label}:</span>
-      <span class="chip-before">${fmt(c.before)}</span>
-      <span class="chip-arrow">→</span>
+      <span>${getBankEmoji(c.key)} ${c.label}:</span>
+      <span>${fmt(c.before)}</span>
+      <span style="margin:0 2px;color:var(--text3)">→</span>
       <span class="chip-after ${c.dir}">${fmt(c.after)}</span>
     </div>`).join('')}</div>`;
 }
@@ -1119,7 +1330,7 @@ function switchLoginTab(mode) {
   document.getElementById('tab-masuk').classList.toggle('active', mode==='masuk');
   document.getElementById('tab-daftar').classList.toggle('active', mode==='daftar');
   document.getElementById('btn-login-label').textContent = mode==='masuk' ? 'MASUK' : 'DAFTAR';
-  const e=document.getElementById('login-err'); e.textContent=''; e.style.color='var(--red)';
+  document.getElementById('login-err').textContent='';
 }
 
 async function submitLogin() {
@@ -1130,9 +1341,7 @@ async function submitLogin() {
   errEl.style.color='var(--red)';
   if(!email||!password){errEl.textContent='Email dan password harus diisi.';return;}
   if(password.length<6){errEl.textContent='Password minimal 6 karakter.';return;}
-  btn.disabled=true;
-  btn.innerHTML='⚡ MEMPROSES...';
-  errEl.textContent='';
+  btn.disabled=true; btn.innerHTML='🌸 MEMPROSES...'; errEl.textContent='';
   try {
     if(loginMode==='masuk'){
       const{data,error}=await supabaseClient.auth.signInWithPassword({email,password});
@@ -1148,23 +1357,20 @@ async function submitLogin() {
       const{data,error}=await supabaseClient.auth.signUp({email,password});
       if(error){
         const m=error.message||'';
-        if(m.includes('already registered')) errEl.textContent='Email sudah terdaftar. Silakan masuk!';
+        if(m.includes('already registered')) errEl.textContent='Email sudah terdaftar.';
         else if(m.includes('fetch')||m.includes('Network')) errEl.textContent='Tidak bisa connect. Cek internet!';
         else errEl.textContent=m||'Terjadi kesalahan.';
         return;
       }
       if(data?.user&&!data.session){
         errEl.style.color='var(--mint)';
-        errEl.textContent='✓ Akun dibuat! Cek email kamu ya~';
+        errEl.textContent='✓ Akun dibuat! Cek email kamu~';
         document.getElementById('resend-box').style.display='block';
         return;
       }
-      if(data?.session){errEl.style.color='var(--mint)';errEl.textContent='✓ Akun dibuat! Sedang masuk...';return;}
-      errEl.textContent='Gagal membuat akun.';
     }
-  } catch(e) {
-    errEl.textContent=e.message||'Terjadi kesalahan tidak diketahui.';
-  } finally {
+  } catch(e) { errEl.textContent=e.message||'Terjadi kesalahan.'; }
+  finally {
     btn.disabled=false;
     btn.innerHTML=`<span id="btn-login-label">${loginMode==='masuk'?'MASUK':'DAFTAR'}</span>`;
   }
@@ -1178,35 +1384,35 @@ async function logout(){
   showLoading(true);
   try{safeStorage.del(cacheKey());}catch{}
   await supabaseClient.auth.signOut();
-  currentUser=null;stateRowId=null;state=structuredClone(defaultState);
-  setUserUI(null);showLoading(false);showLoginScreen(true);showToast('SIGNED OUT ⚡');
+  currentUser=null; stateRowId=null; state=structuredClone(defaultState);
+  setUserUI(null); showLoading(false); showLoginScreen(true); showToast('さようなら ⚡');
 }
 
 function setUserUI(user){
   const pill=document.getElementById('user-pill');
-  const avatar=document.getElementById('user-avatar');
-  const nameEl=document.getElementById('user-name');
   const lb=document.getElementById('btn-logout');
   if(user){
-    pill.style.display='flex';lb.style.display='flex';
+    pill.style.display='flex'; lb.style.display='flex';
     const dn=(user.email||'User').split('@')[0];
-    nameEl.textContent=dn.toUpperCase();avatar.textContent=dn[0].toUpperCase();
-  } else { pill.style.display='none';lb.style.display='none'; }
+    document.getElementById('user-name').textContent=dn.toUpperCase();
+    document.getElementById('user-avatar').textContent=dn[0].toUpperCase();
+  } else { pill.style.display='none'; lb.style.display='none'; }
 }
 
 async function resendEmail(){
   const email=document.getElementById('login-email').value.trim();
-  if(!email){showToast('Masukkan email dulu!','var(--red)');return;}
-  const btn=document.getElementById('btn-resend');btn.disabled=true;
+  if(!email){showToast('Masukkan email dulu!','red');return;}
+  const btn=document.getElementById('btn-resend'); btn.disabled=true;
   const{error}=await supabaseClient.auth.resend({type:'signup',email});
-  if(error){showToast('Gagal: '+error.message,'var(--red)');btn.disabled=false;return;}
+  if(error){showToast('Gagal: '+error.message,'red');btn.disabled=false;return;}
   showToast('Email dikirim ulang! 📧');
-  let s=60;const cd=document.getElementById('resend-countdown');
-  const iv=setInterval(()=>{s--;cd.textContent=`Kirim ulang lagi dalam ${s}s`;if(s<=0){clearInterval(iv);btn.disabled=false;cd.textContent='';}},1000);
+  let s=60; const cd=document.getElementById('resend-countdown');
+  const iv=setInterval(()=>{s--;cd.textContent=`Kirim ulang dalam ${s}s`;
+    if(s<=0){clearInterval(iv);btn.disabled=false;cd.textContent='';}},1000);
 }
 
 /* ═══════════════════════════════════════════
-   STORAGE
+   STORAGE / CACHE
 ═══════════════════════════════════════════ */
 const CACHE_PREFIX='konter_cache_';
 const safeStorage={
@@ -1229,20 +1435,20 @@ function applyState(s,rowId){
     state.banks=DEFAULT_BANKS.map(k=>({key:k,label:DEFAULT_LABELS[k],icon:DEFAULT_ICONS[k],custom:false}));
     Object.keys(state.saldo).forEach(k=>{
       if(!DEFAULT_BANKS.includes(k)&&!state.banks.find(b=>b.key===k))
-        state.banks.push({key:k,label:k,icon:'ti-wallet',custom:true});
+        state.banks.push({key:k,label:k,icon:'🏦',custom:true});
     });
   }
   state.utang.forEach(u=>{if(!u.trx)u.trx=[];});
   stateRowId=rowId;
   refreshAllDropdowns();
-  renderMiniSaldo();renderSaldoDetail();renderBankList();updateCancelBanner();
+  renderMiniSaldo(); renderSaldoDetail(); renderBankList(); updateCancelBanner();
 }
 
 async function loadState(){
   if(!currentUser)return;
   const cached=readCache();
   if(cached){applyState(cached.state,cached.rowId);showLoginScreen(false);showLoading(false);syncFromServer(false);return;}
-  showLoading(true);await syncFromServer(true);
+  showLoading(true); await syncFromServer(true);
 }
 
 async function syncFromServer(showUI){
@@ -1251,16 +1457,16 @@ async function syncFromServer(showUI){
     if(error)throw error;
     if(data&&data.length>0){
       const ss=data[0].data||structuredClone(defaultState);
-      const rid=data[0].id;applyState(ss,rid);writeCache(ss,rid);
+      applyState(ss,data[0].id); writeCache(ss,data[0].id);
     } else {
       const fresh=structuredClone(defaultState);
       const{data:ins,error:ie}=await supabaseClient.from('konter_state').insert([{user_id:currentUser.id,data:fresh}]).select();
       if(ie)throw ie;
-      applyState(fresh,ins?.[0]?.id||null);writeCache(fresh,ins?.[0]?.id||null);
+      applyState(fresh,ins?.[0]?.id||null); writeCache(fresh,ins?.[0]?.id||null);
     }
     if(showUI)showLoginScreen(false);
   }catch(err){
-    if(showUI){showLoginScreen(false);showToast('Gagal sync: '+err.message,'var(--red)');}
+    if(showUI){showLoginScreen(false);showToast('Gagal sync: '+err.message,'red');}
   }finally{if(showUI)showLoading(false);}
 }
 
@@ -1275,8 +1481,8 @@ async function pushToServer(){
   if(!currentUser||!stateRowId)return;
   try{
     const{error}=await supabaseClient.from('konter_state').update({data:state}).eq('id',stateRowId).eq('user_id',currentUser.id);
-    if(error)throw error;writeCache(state,stateRowId);
-  }catch(err){showToast('Gagal simpan: '+err.message,'var(--red)');}
+    if(error)throw error; writeCache(state,stateRowId);
+  }catch(err){showToast('Gagal simpan: '+err.message,'red');}
 }
 
 supabaseClient.auth.onAuthStateChange(async(event,session)=>{
@@ -1306,40 +1512,54 @@ function showPage(id,btn){
 }
 
 /* ═══════════════════════════════════════════
-   RENDER SALDO
+   RENDER SALDO — with TOTAL
 ═══════════════════════════════════════════ */
 function renderMiniSaldo(){
-  document.getElementById('mini-saldo').innerHTML=state.banks.map(b=>`
+  const total = getTotalSaldo();
+  const cardsHtml = state.banks.map(b=>`
     <div class="saldo-card">
       <div class="saldo-label">${getBankEmoji(b.key)} ${b.label}</div>
       <div class="saldo-val">${fmt(state.saldo[b.key]||0)}</div>
     </div>`).join('');
+  const totalCard = `
+    <div class="saldo-card total-card">
+      <div class="saldo-label">💰 TOTAL SEMUA</div>
+      <div class="saldo-val total">${fmt(total)}</div>
+    </div>`;
+  document.getElementById('mini-saldo').innerHTML = cardsHtml + totalCard;
 }
+
 function renderSaldoDetail(){
-  const tot=state.utang.reduce((s,u)=>s+u.total,0);
-  document.getElementById('saldo-detail').innerHTML=state.banks.map(b=>`
+  const total = getTotalSaldo();
+  const totUtang = state.utang.reduce((s,u)=>s+u.total,0);
+  const cardsHtml = state.banks.map(b=>`
     <div class="saldo-card">
       <div class="saldo-label">${getBankEmoji(b.key)} ${b.label}</div>
       <div class="saldo-val">${fmt(state.saldo[b.key]||0)}</div>
-    </div>`).join('')+`
+    </div>`).join('');
+  const extras = `
+    <div class="saldo-card total-card">
+      <div class="saldo-label">💰 TOTAL SEMUA</div>
+      <div class="saldo-val total">${fmt(total)}</div>
+    </div>
     <div class="saldo-card">
-      <div class="saldo-label">📋 Total Utang</div>
-      <div class="saldo-val utang">${fmt(tot)}</div>
+      <div class="saldo-label">📋 TOTAL UTANG</div>
+      <div class="saldo-val utang">${fmt(totUtang)}</div>
     </div>`;
+  document.getElementById('saldo-detail').innerHTML = cardsHtml + extras;
 }
+
 function renderBankList(){
-  const el=document.getElementById('bank-list');if(!el)return;
+  const el=document.getElementById('bank-list'); if(!el)return;
   el.innerHTML=state.banks.map(b=>`
     <div class="bank-item">
       <div class="bank-item-left">
         <div class="bank-item-icon">${getBankEmoji(b.key)}</div>
         <div><div class="bank-item-name">${b.label}</div><div class="bank-item-key">${b.key}</div></div>
       </div>
-      <div style="display:flex;align-items:center;gap:10px">
+      <div style="display:flex;align-items:center;gap:8px">
         <div class="bank-item-saldo">${fmt(state.saldo[b.key]||0)}</div>
-        <button class="btn-del-bank" onclick="openDelBank('${b.key}')" ${b.custom?'':'disabled'}>
-          <i class="ti ti-trash"></i>
-        </button>
+        <button class="btn-del-bank" onclick="openDelBank('${b.key}')" ${b.custom?'':'disabled'}>🗑</button>
       </div>
     </div>`).join('');
 }
@@ -1358,7 +1578,7 @@ function fillPreset(key){
   document.getElementById('p-from').value=p.from;
   document.getElementById('p-modal').value=p.modal;
   document.getElementById('p-jual').value=p.jual;
-  updatePulsaPreview();showToast('Form diisi: '+p.nama+' ⚡');
+  updatePulsaPreview(); showToast('Form diisi: '+p.nama+' ⚡');
 }
 function setTrxType(type,btn){
   document.querySelectorAll('.trx-tab').forEach(t=>t.classList.remove('active'));
@@ -1386,9 +1606,10 @@ function updatePulsaPreview(){
 }
 function updateCashoutPreview(){
   const t=parseFloat(document.getElementById('co-total').value)||0;
-  const f=parseFloat(document.getElementById('co-fee').value)||0;
+  const profit=parseFloat(document.getElementById('co-fee').value)||0;
   document.getElementById('co-pv-cash').textContent=fmt(t);
-  document.getElementById('co-pv-dana').textContent=fmt(t+f);
+  document.getElementById('co-pv-profit').textContent=fmt(profit);
+  document.getElementById('co-pv-dana').textContent=fmt(t+profit);
 }
 function updateBarangPreview(){
   const m=parseFloat(document.getElementById('br-modal').value)||0;
@@ -1409,7 +1630,7 @@ function addUtang(namaInput,jumlah,desc,trxType){
 }
 
 /* ═══════════════════════════════════════════
-   SUBMITS — dengan saldo tracking
+   SUBMITS
 ═══════════════════════════════════════════ */
 function submitPulsa(){
   const nama=document.getElementById('p-nama').value.trim();
@@ -1418,35 +1639,39 @@ function submitPulsa(){
   const jual=parseFloat(document.getElementById('p-jual').value)||0;
   const isUtang=state.utangState.pulsa;
   const utangNama=document.getElementById('p-utang-nama').value.trim();
-  if(!nama||!modal||!jual){showToast('Lengkapi semua field! ⚡','var(--red)');return;}
-  if((state.saldo[from]||0)<modal){showToast('Saldo '+getBankLabel(from)+' tidak cukup!','var(--red)');return;}
+  if(!nama||!modal||!jual){showToast('Lengkapi semua field!','red');return;}
+  if((state.saldo[from]||0)<modal){showToast('Saldo '+getBankLabel(from)+' tidak cukup!','red');return;}
   const snapBefore=snapshotSaldo();
   state.saldo[from]=(state.saldo[from]||0)-modal;
   if(!isUtang)state.saldo.cash=(state.saldo.cash||0)+jual;
   else addUtang(utangNama,jual,'Pulsa: '+nama,'pulsa');
-  const snapAfter=snapshotSaldo();
-  const saldoChips=buildSaldoChips(snapBefore,snapAfter);
+  const saldoChips=buildSaldoChips(snapBefore,snapshotSaldo());
   state.riwayat.unshift({type:'pulsa',nama,from,modal,jual,isUtang,utangNama,tgl:now(),date:nowDate(),saldoChips});
-  saveState();showToast('Transaksi pulsa tersimpan! ⚡');resetForm('pulsa');renderMiniSaldo();updateCancelBanner();
+  saveState(); showToast('Transaksi pulsa tersimpan! ⚡'); resetForm('pulsa'); renderMiniSaldo(); updateCancelBanner();
 }
 
 function submitCashout(){
   const nama=document.getElementById('co-nama').value.trim();
   const total=parseFloat(document.getElementById('co-total').value)||0;
-  const fee=parseFloat(document.getElementById('co-fee').value)||0;
+  const profit=parseFloat(document.getElementById('co-fee').value)||0; // renamed fee → profit
   const from=document.getElementById('co-from').value;
   const isUtang=state.utangState.cashout;
   const utangNama=document.getElementById('co-utang-nama').value.trim();
-  if(!nama||!total){showToast('Lengkapi semua field!','var(--red)');return;}
-  if((state.saldo.cash||0)<total){showToast('Saldo Cash tidak cukup!','var(--red)');return;}
+  if(!nama||!total){showToast('Lengkapi semua field!','red');return;}
+  if((state.saldo.cash||0)<total){showToast('Saldo Cash tidak cukup!','red');return;}
   const snapBefore=snapshotSaldo();
   state.saldo.cash=(state.saldo.cash||0)-total;
-  if(!isUtang)state.saldo[from]=(state.saldo[from]||0)+(total+fee);
-  else addUtang(utangNama,total+fee,'Cash Out: '+nama,'cashout');
-  const snapAfter=snapshotSaldo();
-  const saldoChips=buildSaldoChips(snapBefore,snapAfter);
-  state.riwayat.unshift({type:'cashout',nama,from,total,fee,isUtang,utangNama,tgl:now(),date:nowDate(),saldoChips});
-  saveState();showToast('Cash out tersimpan! 💵');resetForm('cashout');renderMiniSaldo();updateCancelBanner();
+  // profit masuk ke cash juga (terpisah dari total yang dikembalikan ke sumber)
+  if(!isUtang){
+    state.saldo[from]=(state.saldo[from]||0)+(total+profit);
+    if(profit>0)state.saldo.cash=(state.saldo.cash||0)+profit; // profit kembali ke cash
+  } else {
+    addUtang(utangNama,total+profit,'Cash Out: '+nama,'cashout');
+  }
+  const saldoChips=buildSaldoChips(snapBefore,snapshotSaldo());
+  // Store as fee field for backward compat but label as profit in UI
+  state.riwayat.unshift({type:'cashout',nama,from,total,fee:profit,isUtang,utangNama,tgl:now(),date:nowDate(),saldoChips});
+  saveState(); showToast('Cash out tersimpan! 💵'); resetForm('cashout'); renderMiniSaldo(); updateCancelBanner();
 }
 
 function submitBarang(){
@@ -1455,31 +1680,28 @@ function submitBarang(){
   const jual=parseFloat(document.getElementById('br-jual').value)||0;
   const isUtang=state.utangState.barang;
   const utangNama=document.getElementById('br-utang-nama').value.trim();
-  if(!nama||!modal||!jual){showToast('Lengkapi semua field!','var(--red)');return;}
+  if(!nama||!modal||!jual){showToast('Lengkapi semua field!','red');return;}
   const snapBefore=snapshotSaldo();
   if(!isUtang)state.saldo.cash=(state.saldo.cash||0)+jual;
   else addUtang(utangNama,jual,'Barang: '+nama,'barang');
-  const snapAfter=snapshotSaldo();
-  const saldoChips=buildSaldoChips(snapBefore,snapAfter);
+  const saldoChips=buildSaldoChips(snapBefore,snapshotSaldo());
   state.riwayat.unshift({type:'barang',nama,modal,jual,isUtang,utangNama,tgl:now(),date:nowDate(),saldoChips});
-  saveState();showToast('Transaksi barang tersimpan! 📦');resetForm('barang');renderMiniSaldo();updateCancelBanner();
+  saveState(); showToast('Transaksi barang tersimpan! 📦'); resetForm('barang'); renderMiniSaldo(); updateCancelBanner();
 }
 
 function submitPengeluaran(){
   const nama=document.getElementById('pg-nama').value.trim();
   const from=document.getElementById('pg-from').value;
   const jumlah=parseFloat(document.getElementById('pg-jumlah').value)||0;
-  if(!nama||!jumlah){showToast('Lengkapi field!','var(--red)');return;}
-  if((state.saldo[from]||0)<jumlah){showToast('Saldo tidak cukup!','var(--red)');return;}
+  if(!nama||!jumlah){showToast('Lengkapi field!','red');return;}
+  if((state.saldo[from]||0)<jumlah){showToast('Saldo tidak cukup!','red');return;}
   const snapBefore=snapshotSaldo();
   state.saldo[from]=(state.saldo[from]||0)-jumlah;
-  const snapAfter=snapshotSaldo();
-  const saldoChips=buildSaldoChips(snapBefore,snapAfter);
+  const saldoChips=buildSaldoChips(snapBefore,snapshotSaldo());
   state.riwayat.unshift({type:'pengeluaran',nama,from,jumlah,tgl:now(),date:nowDate(),saldoChips});
-  saveState();renderMiniSaldo();
-  document.getElementById('pg-nama').value='';
-  document.getElementById('pg-jumlah').value='';
-  showToast('Pengeluaran tersimpan! 🧾');updateCancelBanner();
+  saveState(); renderMiniSaldo();
+  document.getElementById('pg-nama').value=''; document.getElementById('pg-jumlah').value='';
+  showToast('Pengeluaran tersimpan! 🧾'); updateCancelBanner();
 }
 
 function submitPindah(){
@@ -1487,71 +1709,68 @@ function submitPindah(){
   const to=document.getElementById('ps-to').value;
   const jumlah=parseFloat(document.getElementById('ps-jumlah').value)||0;
   const fee=parseFloat(document.getElementById('ps-fee').value)||0;
-  if(from===to){showToast('From & To tidak boleh sama!','var(--red)');return;}
-  if(!jumlah){showToast('Masukkan jumlah!','var(--red)');return;}
-  if((state.saldo[from]||0)<(jumlah+fee)){showToast('Saldo '+getBankLabel(from)+' tidak cukup!','var(--red)');return;}
+  if(from===to){showToast('From & To tidak boleh sama!','red');return;}
+  if(!jumlah){showToast('Masukkan jumlah!','red');return;}
+  if((state.saldo[from]||0)<(jumlah+fee)){showToast('Saldo '+getBankLabel(from)+' tidak cukup!','red');return;}
   const snapBefore=snapshotSaldo();
   state.saldo[from]=(state.saldo[from]||0)-(jumlah+fee);
   state.saldo[to]=(state.saldo[to]||0)+jumlah;
-  const snapAfter=snapshotSaldo();
-  const saldoChips=buildSaldoChips(snapBefore,snapAfter);
+  const saldoChips=buildSaldoChips(snapBefore,snapshotSaldo());
   state.riwayat.unshift({type:'pindah',from,to,jumlah,fee,tgl:now(),date:nowDate(),saldoChips});
-  saveState();showToast('Pindah saldo berhasil! 🔄');
-  document.getElementById('ps-jumlah').value='';
-  document.getElementById('ps-fee').value='';
-  renderSaldoDetail();renderBankList();renderMiniSaldo();updateCancelBanner();
+  saveState(); showToast('Pindah saldo berhasil! 🔄');
+  document.getElementById('ps-jumlah').value=''; document.getElementById('ps-fee').value='';
+  renderSaldoDetail(); renderBankList(); renderMiniSaldo(); updateCancelBanner();
 }
 
 function submitTambahSaldo(){
   const to=document.getElementById('ts-to').value;
   const jumlah=parseFloat(document.getElementById('ts-jumlah').value)||0;
   const ket=document.getElementById('ts-ket').value.trim()||`Tambah saldo ${getBankLabel(to)}`;
-  if(!jumlah){showToast('Masukkan jumlah!','var(--red)');return;}
+  if(!jumlah){showToast('Masukkan jumlah!','red');return;}
   const snapBefore=snapshotSaldo();
   state.saldo[to]=(state.saldo[to]||0)+jumlah;
-  const snapAfter=snapshotSaldo();
-  const saldoChips=buildSaldoChips(snapBefore,snapAfter);
+  const saldoChips=buildSaldoChips(snapBefore,snapshotSaldo());
   state.riwayat.unshift({type:'tambah_saldo',to,jumlah,ket,tgl:now(),date:nowDate(),saldoChips});
   saveState();
-  document.getElementById('ts-jumlah').value='';
-  document.getElementById('ts-ket').value='';
-  renderSaldoDetail();renderBankList();renderMiniSaldo();updateCancelBanner();
-  showToast(`Saldo ${getBankLabel(to)} +${fmt(jumlah)}!`);
+  document.getElementById('ts-jumlah').value=''; document.getElementById('ts-ket').value='';
+  renderSaldoDetail(); renderBankList(); renderMiniSaldo(); updateCancelBanner();
+  showToast(`Saldo ${getBankLabel(to)} +${fmt(jumlah)}! 🌸`);
 }
 
 /* ═══════════════════════════════════════════
-   TAMBAH/HAPUS BANK
+   BANK MANAGEMENT
 ═══════════════════════════════════════════ */
 function submitTambahBank(){
   const nameInput=document.getElementById('new-bank-name');
   const label=nameInput.value.trim();
-  if(!label){showToast('Masukkan nama akun!','var(--red)');return;}
+  if(!label){showToast('Masukkan nama akun!','red');return;}
   let key=label.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
-  if(!key){showToast('Nama akun tidak valid!','var(--red)');return;}
+  if(!key){showToast('Nama akun tidak valid!','red');return;}
   if(state.banks.find(b=>b.key===key||b.label.toLowerCase()===label.toLowerCase())){
-    showToast('Akun dengan nama ini sudah ada!','var(--red)');return;
+    showToast('Akun sudah ada!','red');return;
   }
-  state.banks.push({key,label,icon:'ti-wallet',custom:true});
+  state.banks.push({key,label,icon:'🏦',custom:true});
   state.saldo[key]=0;
-  saveState();nameInput.value='';
-  renderBankList();refreshAllDropdowns();renderMiniSaldo();renderSaldoDetail();
-  showToast(`Akun "${label}" ditambahkan! 🏦`);
+  saveState(); nameInput.value='';
+  renderBankList(); refreshAllDropdowns(); renderMiniSaldo(); renderSaldoDetail();
+  showToast(`Akun "${label}" ditambahkan! 🌸`);
 }
+
 let pendingDelBankKey=null;
 function openDelBank(key){
   const b=state.banks.find(b=>b.key===key);
   if(!b||!b.custom)return;
   pendingDelBankKey=key;
   document.getElementById('modal-del-bank-info').textContent=
-    `Hapus akun "${b.label}"? Saldo saat ini: ${fmt(state.saldo[key]||0)}.`;
+    `Hapus akun "${b.label}"? Saldo: ${fmt(state.saldo[key]||0)}.`;
   document.getElementById('modal-del-bank').classList.add('open');
 }
 function confirmDelBank(){
-  const key=pendingDelBankKey;if(!key)return;
-  state.banks=state.banks.filter(b=>b.key!==key);delete state.saldo[key];
-  saveState();closeModal('modal-del-bank');
-  renderBankList();refreshAllDropdowns();renderMiniSaldo();renderSaldoDetail();
-  showToast('Akun berhasil dihapus!');
+  const key=pendingDelBankKey; if(!key)return;
+  state.banks=state.banks.filter(b=>b.key!==key); delete state.saldo[key];
+  saveState(); closeModal('modal-del-bank');
+  renderBankList(); refreshAllDropdowns(); renderMiniSaldo(); renderSaldoDetail();
+  showToast('Akun dihapus!');
 }
 
 /* ═══════════════════════════════════════════
@@ -1567,31 +1786,32 @@ function updateCancelBanner(){
   if(!trx){banner.style.display='none';return;}
   banner.style.display='flex';
   let d='';
-  if(trx.type==='pulsa') d=`📶 ${trx.nama} — Modal ${fmt(trx.modal)}, Jual ${fmt(trx.jual)}`;
+  if(trx.type==='pulsa')        d=`📶 ${trx.nama} — Modal ${fmt(trx.modal)}, Jual ${fmt(trx.jual)}`;
   else if(trx.type==='cashout') d=`💵 ${trx.nama} — ${fmt(trx.total)}`;
-  else if(trx.type==='barang') d=`📦 ${trx.nama} — ${fmt(trx.jual)}`;
+  else if(trx.type==='barang')  d=`📦 ${trx.nama} — ${fmt(trx.jual)}`;
   else if(trx.type==='pengeluaran') d=`🧾 ${trx.nama} — ${fmt(trx.jumlah)}`;
-  else if(trx.type==='pindah') d=`🔄 ${getBankLabel(trx.from)} → ${getBankLabel(trx.to)} ${fmt(trx.jumlah)}`;
+  else if(trx.type==='pindah')  d=`🔄 ${getBankLabel(trx.from)} → ${getBankLabel(trx.to)} ${fmt(trx.jumlah)}`;
   else if(trx.type==='tambah_saldo') d=`➕ ${getBankLabel(trx.to)} +${fmt(trx.jumlah)}`;
   sub.textContent=d+' · '+trx.tgl;
 }
 
 function openCancelTrx(){
-  const trx=getLastCancelableTrx();if(!trx)return;
+  const trx=getLastCancelableTrx(); if(!trx)return;
   let detail='';
   if(trx.type==='pulsa'){
-    if(!trx.isUtang) detail=`• Cash berkurang ${fmt(trx.jual)}\n• ${getBankLabel(trx.from)} dikembalikan +${fmt(trx.modal)}`;
-    else detail=`• Utang ${trx.utangNama||'Pelanggan'} dikurangi ${fmt(trx.jual)}\n• ${getBankLabel(trx.from)} dikembalikan +${fmt(trx.modal)}`;
+    if(!trx.isUtang) detail=`• Cash berkurang ${fmt(trx.jual)}\n• ${getBankLabel(trx.from)} +${fmt(trx.modal)}`;
+    else detail=`• Utang ${trx.utangNama||'Pelanggan'} dikurangi ${fmt(trx.jual)}\n• ${getBankLabel(trx.from)} +${fmt(trx.modal)}`;
   } else if(trx.type==='cashout'){
-    if(!trx.isUtang) detail=`• ${getBankLabel(trx.from)} berkurang ${fmt(trx.total+trx.fee)}\n• Cash dikembalikan +${fmt(trx.total)}`;
-    else detail=`• Utang ${trx.utangNama||'Pelanggan'} dikurangi ${fmt(trx.total+trx.fee)}\n• Cash dikembalikan +${fmt(trx.total)}`;
+    const total=trx.total; const profit=trx.fee||0;
+    if(!trx.isUtang) detail=`• ${getBankLabel(trx.from)} berkurang ${fmt(total+profit)}\n• Cash +${fmt(total)}\n• Profit ${fmt(profit)} dibatalkan`;
+    else detail=`• Utang ${trx.utangNama||'Pelanggan'} dikurangi ${fmt(total+profit)}\n• Cash +${fmt(total)}`;
   } else if(trx.type==='barang'){
     if(!trx.isUtang) detail=`• Cash berkurang ${fmt(trx.jual)}`;
     else detail=`• Utang ${trx.utangNama||'Pelanggan'} dikurangi ${fmt(trx.jual)}`;
   } else if(trx.type==='pengeluaran'){
-    detail=`• ${getBankLabel(trx.from)} dikembalikan +${fmt(trx.jumlah)}`;
+    detail=`• ${getBankLabel(trx.from)} +${fmt(trx.jumlah)}`;
   } else if(trx.type==='pindah'){
-    detail=`• ${getBankLabel(trx.from)} dikembalikan +${fmt(trx.jumlah+(trx.fee||0))}\n• ${getBankLabel(trx.to)} berkurang ${fmt(trx.jumlah)}`;
+    detail=`• ${getBankLabel(trx.from)} +${fmt(trx.jumlah+(trx.fee||0))}\n• ${getBankLabel(trx.to)} berkurang ${fmt(trx.jumlah)}`;
   } else if(trx.type==='tambah_saldo'){
     detail=`• ${getBankLabel(trx.to)} berkurang ${fmt(trx.jumlah)}`;
   }
@@ -1610,10 +1830,15 @@ function confirmCancelTrx(){
     else{const u=state.utang.find(u=>u.nama===(trx.utangNama||'Pelanggan'));
       if(u){u.total=Math.max(0,u.total-trx.jual);if(u.total<=0)state.utang=state.utang.filter(x=>x!==u);}}
   } else if(trx.type==='cashout'){
+    const profit=trx.fee||0;
     state.saldo.cash=(state.saldo.cash||0)+trx.total;
-    if(!trx.isUtang)state.saldo[trx.from]=Math.max(0,(state.saldo[trx.from]||0)-(trx.total+trx.fee));
-    else{const u=state.utang.find(u=>u.nama===(trx.utangNama||'Pelanggan'));
-      if(u){u.total=Math.max(0,u.total-(trx.total+trx.fee));if(u.total<=0)state.utang=state.utang.filter(x=>x!==u);}}
+    if(!trx.isUtang){
+      state.saldo[trx.from]=Math.max(0,(state.saldo[trx.from]||0)-(trx.total+profit));
+      if(profit>0)state.saldo.cash=Math.max(0,(state.saldo.cash||0)-profit);
+    } else {
+      const u=state.utang.find(u=>u.nama===(trx.utangNama||'Pelanggan'));
+      if(u){u.total=Math.max(0,u.total-(trx.total+profit));if(u.total<=0)state.utang=state.utang.filter(x=>x!==u);}
+    }
   } else if(trx.type==='barang'){
     if(!trx.isUtang)state.saldo.cash=Math.max(0,(state.saldo.cash||0)-trx.jual);
     else{const u=state.utang.find(u=>u.nama===(trx.utangNama||'Pelanggan'));
@@ -1626,20 +1851,17 @@ function confirmCancelTrx(){
   } else if(trx.type==='tambah_saldo'){
     state.saldo[trx.to]=Math.max(0,(state.saldo[trx.to]||0)-trx.jumlah);
   }
-  const snapAfter=snapshotSaldo();
-  const saldoChips=buildSaldoChips(snapBefore,snapAfter);
-  trx._cancelled=true;trx._cancelledAt=now();
+  const saldoChips=buildSaldoChips(snapBefore,snapshotSaldo());
+  trx._cancelled=true; trx._cancelledAt=now();
   state.riwayat.unshift({type:'cancel',refType:trx.type,refNama:trx.nama||trx.ket||'',tgl:now(),date:nowDate(),saldoChips});
-  saveState();closeModal('modal-cancel-trx');
-  renderMiniSaldo();renderSaldoDetail();renderBankList();updateCancelBanner();
+  saveState(); closeModal('modal-cancel-trx');
+  renderMiniSaldo(); renderSaldoDetail(); renderBankList(); updateCancelBanner();
   showToast('Transaksi dibatalkan! ⚡');
 }
 
 /* ═══════════════════════════════════════════
-   RIWAYAT — dengan saldo chips
+   RIWAYAT
 ═══════════════════════════════════════════ */
-const TYPE_EMOJI={'pulsa':'📶','cashout':'💵','barang':'📦','pindah':'🔄','pengeluaran':'🧾','tambah_saldo':'➕','bayar_utang':'✅','cancel':'⚡'};
-
 function renderRiwayat(){
   const fType=document.getElementById('filter-type').value;
   const fDate=document.getElementById('filter-date').value;
@@ -1649,58 +1871,63 @@ function renderRiwayat(){
     return true;
   });
   let totalProfit=0;
-  list.forEach(r=>{if((r.type==='pulsa'||r.type==='barang')&&!r._cancelled)totalProfit+=(r.jual-r.modal);});
+  list.forEach(r=>{
+    if(!r._cancelled){
+      if(r.type==='pulsa'||r.type==='barang')totalProfit+=(r.jual-r.modal);
+      if(r.type==='cashout')totalProfit+=(r.fee||0);
+    }
+  });
   document.getElementById('summary-row').innerHTML=`
     <div class="summary-pill"><span>📊 Total Trx</span><strong>${list.length}</strong></div>
-    <div class="summary-pill profit"><span>💹 Profit</span><strong>${fmt(totalProfit)}</strong></div>`;
+    <div class="summary-pill profit"><span>💹 Total Profit</span><strong>${fmt(totalProfit)}</strong></div>`;
+
   const el=document.getElementById('riwayat-list');
-  if(!list.length){el.innerHTML='<div class="empty-state"><span class="empty-emoji">◈</span>BELUM ADA RIWAYAT TRANSAKSI</div>';return;}
+  if(!list.length){el.innerHTML='<div class="empty-state"><span class="empty-emoji">◈</span>BELUM ADA RIWAYAT</div>';return;}
   el.innerHTML=list.map(r=>{
     let title='',sub='',amount='',amtClass='',badge='';
-    const cx=r._cancelled?`<span class="badge badge-cancel" style="margin-left:4px">DIBATALKAN</span>`:'';
+    const cx=r._cancelled?`<span class="badge badge-cancel" style="margin-left:3px">DIBATALKAN</span>`:'';
     if(r.type==='pulsa'){
-      title=`${TYPE_EMOJI.pulsa} ${r.nama}`;
+      title=`📶 ${r.nama}`;
       sub=`Dari: ${getBankLabel(r.from)} · Modal: ${fmt(r.modal)} · Profit: ${fmt(r.jual-r.modal)}`;
       amount=r.isUtang?`Utang ${fmt(r.jual)}`:'+'+fmt(r.jual);
       amtClass=r.isUtang?'amount-minus':'amount-plus';
-      badge=`<span class="badge badge-pulsa">PULSA</span>${r.isUtang?`<span class="badge badge-utang" style="margin-left:4px">UTANG</span>`:''}${cx}`;
+      badge=`<span class="badge badge-pulsa">PULSA</span>${r.isUtang?`<span class="badge badge-utang" style="margin-left:3px">UTANG</span>`:''}${cx}`;
     }else if(r.type==='cashout'){
-      title=`${TYPE_EMOJI.cashout} ${r.nama}`;
-      sub=`Total: ${fmt(r.total)} · Fee: ${fmt(r.fee)}`;
-      amount='-'+fmt(r.total);amtClass='amount-minus';
-      badge=`<span class="badge badge-cashout">CASH OUT</span>${r.isUtang?`<span class="badge badge-utang" style="margin-left:4px">UTANG</span>`:''}${cx}`;
+      title=`💵 ${r.nama}`;
+      sub=`Total: ${fmt(r.total)} · Profit: ${fmt(r.fee||0)}`;
+      amount='-'+fmt(r.total); amtClass='amount-minus';
+      badge=`<span class="badge badge-cashout">CASH OUT</span>${r.isUtang?`<span class="badge badge-utang" style="margin-left:3px">UTANG</span>`:''}${cx}`;
     }else if(r.type==='barang'){
-      title=`${TYPE_EMOJI.barang} ${r.nama}`;
+      title=`📦 ${r.nama}`;
       sub=`Modal: ${fmt(r.modal)} · Profit: ${fmt(r.jual-r.modal)}`;
       amount=r.isUtang?`Utang ${fmt(r.jual)}`:'+'+fmt(r.jual);
       amtClass=r.isUtang?'amount-minus':'amount-plus';
-      badge=`<span class="badge badge-barang">BARANG</span>${r.isUtang?`<span class="badge badge-utang" style="margin-left:4px">UTANG</span>`:''}${cx}`;
+      badge=`<span class="badge badge-barang">BARANG</span>${r.isUtang?`<span class="badge badge-utang" style="margin-left:3px">UTANG</span>`:''}${cx}`;
     }else if(r.type==='pindah'){
-      title=`${TYPE_EMOJI.pindah} ${getBankLabel(r.from)} → ${getBankLabel(r.to)}`;
+      title=`🔄 ${getBankLabel(r.from)} → ${getBankLabel(r.to)}`;
       sub=r.fee?`Fee: ${fmt(r.fee)}`:'Tanpa fee';
-      amount=fmt(r.jumlah);amtClass='amount-plus';
+      amount=fmt(r.jumlah); amtClass='amount-plus';
       badge=`<span class="badge badge-pindah">PINDAH</span>${cx}`;
     }else if(r.type==='bayar_utang'){
-      title=`${TYPE_EMOJI.bayar_utang} Bayar Utang — ${r.nama}`;sub='';
-      amount='+'+fmt(r.jumlah);amtClass='amount-plus';
+      title=`✅ Bayar Utang — ${r.nama}`;
+      amount='+'+fmt(r.jumlah); amtClass='amount-plus';
       badge='<span class="badge badge-bayar">BAYAR UTANG</span>';
     }else if(r.type==='pengeluaran'){
-      title=`${TYPE_EMOJI.pengeluaran} ${r.nama}`;
+      title=`🧾 ${r.nama}`;
       sub=`Dari: ${getBankLabel(r.from)}`;
-      amount='-'+fmt(r.jumlah);amtClass='amount-minus';
+      amount='-'+fmt(r.jumlah); amtClass='amount-minus';
       badge=`<span class="badge badge-pengeluaran">PENGELUARAN</span>${cx}`;
     }else if(r.type==='tambah_saldo'){
-      title=`${TYPE_EMOJI.tambah_saldo} ${r.ket||'Tambah Saldo'}`;
+      title=`➕ ${r.ket||'Tambah Saldo'}`;
       sub=`Ke: ${getBankLabel(r.to)}`;
-      amount='+'+fmt(r.jumlah);amtClass='amount-plus';
+      amount='+'+fmt(r.jumlah); amtClass='amount-plus';
       badge=`<span class="badge badge-tambah-saldo">TAMBAH SALDO</span>${cx}`;
     }else if(r.type==='cancel'){
-      title=`${TYPE_EMOJI.cancel} Pembatalan — ${r.refNama||r.refType}`;sub='';
-      amount='—';amtClass='';
+      title=`⚡ Pembatalan — ${r.refNama||r.refType}`;
+      amount='—'; amtClass='';
       badge='<span class="badge badge-cancel">PEMBATALAN</span>';
     }
-    // Render saldo chips (tracking before→after)
-    const chipsHtml = r.saldoChips ? renderSaldoChips(r.saldoChips) : '';
+    const chipsHtml=r.saldoChips?renderSaldoChips(r.saldoChips):'';
     return `<div class="riwayat-item" style="${r._cancelled?'opacity:0.5':''}">
       <div class="riwayat-left">
         <div class="riwayat-title">${title}</div>
@@ -1714,30 +1941,30 @@ function renderRiwayat(){
 }
 
 /* ═══════════════════════════════════════════
-   UTANG — dengan detail trx
+   UTANG
 ═══════════════════════════════════════════ */
 function renderUtang(){
   const el=document.getElementById('utang-list');
   const active=state.utang.filter(u=>u.total>0);
   if(!active.length){
-    el.innerHTML='<div class="empty-state"><span class="empty-emoji">⬡</span>TIDAK ADA UTANG TERCATAT</div>';
+    el.innerHTML='<div class="empty-state"><span class="empty-emoji">⬡</span>TIDAK ADA UTANG 🌸</div>';
     return;
   }
   el.innerHTML=active.map(u=>{
     const idx=state.utang.indexOf(u);
     const trxItems=(u.trx||[]).length>0
-      ? (u.trx||[]).map(t=>`
-          <div class="utang-trx-item">
-            <div class="utang-trx-left">
-              <div class="utang-trx-desc">${t.desc||'Transaksi'}</div>
-              <div class="utang-trx-tgl">📅 ${t.tgl||t.date||'—'}</div>
-            </div>
-            <div class="utang-trx-right">
-              <div class="utang-trx-jumlah">${fmt(t.jumlah)}</div>
-              <div class="utang-trx-type">${t.trxType||''}</div>
-            </div>
-          </div>`).join('')
-      : '<div class="utang-empty-trx">📭 Belum ada detail transaksi</div>';
+      ?(u.trx||[]).map(t=>`
+        <div class="utang-trx-item">
+          <div>
+            <div class="utang-trx-desc">${t.desc||'Transaksi'}</div>
+            <div class="utang-trx-tgl">📅 ${t.tgl||t.date||'—'}</div>
+          </div>
+          <div style="text-align:right">
+            <div class="utang-trx-jumlah">${fmt(t.jumlah)}</div>
+            <div style="font-size:10px;color:var(--text3);font-family:'DotGothic16',monospace">${t.trxType||''}</div>
+          </div>
+        </div>`).join('')
+      :'<div class="utang-empty-trx">📭 Belum ada detail</div>';
     return `<div class="utang-item">
       <div class="utang-header" onclick="toggleUtangDetail(${idx})">
         <div class="utang-info">
@@ -1747,7 +1974,7 @@ function renderUtang(){
         </div>
         <div class="utang-header-right">
           <button class="btn-bayar" onclick="event.stopPropagation();openBayarUtang(${idx})">✅ BAYAR</button>
-          <div class="btn-expand" id="expand-btn-${idx}"><i class="ti ti-chevron-down"></i></div>
+          <div class="btn-expand" id="expand-btn-${idx}">▼</div>
         </div>
       </div>
       <div class="utang-detail" id="utang-detail-${idx}">
@@ -1771,7 +1998,7 @@ let selectedUtangIdx=null;
 function openBayarUtang(idx){
   selectedUtangIdx=idx;
   const u=state.utang[idx];
-  document.getElementById('modal-bayar-info').textContent=`${u.nama} — Total utang: ${fmt(u.total)}`;
+  document.getElementById('modal-bayar-info').textContent=`${u.nama} — Total: ${fmt(u.total)}`;
   document.getElementById('modal-bayar-jumlah').value=u.total;
   document.getElementById('modal-bayar').classList.add('open');
 }
@@ -1779,19 +2006,18 @@ function closeModal(id){document.getElementById(id).classList.remove('open');}
 function confirmBayarUtang(){
   const bayar=parseFloat(document.getElementById('modal-bayar-jumlah').value)||0;
   const u=state.utang[selectedUtangIdx];
-  if(!bayar||bayar>u.total){showToast('Jumlah tidak valid!','var(--red)');return;}
+  if(!bayar||bayar>u.total){showToast('Jumlah tidak valid!','red');return;}
   const snapBefore=snapshotSaldo();
   state.saldo.cash=(state.saldo.cash||0)+bayar;
   u.total-=bayar;
-  const snapAfter=snapshotSaldo();
-  const saldoChips=buildSaldoChips(snapBefore,snapAfter);
+  const saldoChips=buildSaldoChips(snapBefore,snapshotSaldo());
   state.riwayat.unshift({type:'bayar_utang',nama:u.nama,jumlah:bayar,tgl:now(),date:nowDate(),saldoChips});
   if(u.total<=0)state.utang.splice(selectedUtangIdx,1);
-  saveState();closeModal('modal-bayar');showToast('Pembayaran utang dicatat! ✅');renderUtang();
+  saveState(); closeModal('modal-bayar'); showToast('Utang dibayar! 🌸 ✅'); renderUtang();
 }
 
 /* ═══════════════════════════════════════════
-   UTILITIES
+   UTILS
 ═══════════════════════════════════════════ */
 function resetForm(type){
   const fields={
@@ -1808,44 +2034,44 @@ function resetForm(type){
 }
 
 function exportCSV(){
-  if(!state.riwayat.length){showToast('Tidak ada data!','var(--red)');return;}
-  const rows=[['Tipe','Nama/Keterangan','Jumlah','Modal','Fee','Dari','Ke','Utang','Dibatalkan','Tanggal']];
+  if(!state.riwayat.length){showToast('Tidak ada data!','red');return;}
+  const rows=[['Tipe','Nama/Keterangan','Jumlah','Modal','Profit/Fee','Dari','Ke','Utang','Dibatalkan','Tanggal']];
   state.riwayat.forEach(r=>{
     const cx=r._cancelled?'Ya':'Tidak';
-    if(r.type==='pulsa')         rows.push(['Pulsa',r.nama,r.jual,r.modal,'',r.from,'',r.isUtang?'Ya':'Tidak',cx,r.tgl]);
-    else if(r.type==='cashout')  rows.push(['Cash Out',r.nama,r.total,'',r.fee,r.from,'',r.isUtang?'Ya':'Tidak',cx,r.tgl]);
-    else if(r.type==='barang')   rows.push(['Barang',r.nama,r.jual,r.modal,'','','',r.isUtang?'Ya':'Tidak',cx,r.tgl]);
-    else if(r.type==='pindah')   rows.push(['Pindah Saldo','',r.jumlah,'',r.fee,r.from,r.to,'Tidak',cx,r.tgl]);
+    if(r.type==='pulsa')          rows.push(['Pulsa',r.nama,r.jual,r.modal,r.jual-r.modal,r.from,'',r.isUtang?'Ya':'Tidak',cx,r.tgl]);
+    else if(r.type==='cashout')   rows.push(['Cash Out',r.nama,r.total,'',r.fee||0,r.from,'',r.isUtang?'Ya':'Tidak',cx,r.tgl]);
+    else if(r.type==='barang')    rows.push(['Barang',r.nama,r.jual,r.modal,r.jual-r.modal,'','',r.isUtang?'Ya':'Tidak',cx,r.tgl]);
+    else if(r.type==='pindah')    rows.push(['Pindah Saldo','',r.jumlah,'',r.fee,r.from,r.to,'Tidak',cx,r.tgl]);
     else if(r.type==='bayar_utang') rows.push(['Bayar Utang',r.nama,r.jumlah,'','','','','Tidak','Tidak',r.tgl]);
     else if(r.type==='pengeluaran') rows.push(['Pengeluaran',r.nama,r.jumlah,'','',r.from,'','Tidak',cx,r.tgl]);
     else if(r.type==='tambah_saldo') rows.push(['Tambah Saldo',r.ket||'',r.jumlah,'','','',r.to,'Tidak',cx,r.tgl]);
-    else if(r.type==='cancel')   rows.push(['Pembatalan',r.refNama||r.refType,'','','','','','Tidak','—',r.tgl]);
+    else if(r.type==='cancel')    rows.push(['Pembatalan',r.refNama||r.refType,'','','','','','Tidak','—',r.tgl]);
   });
   const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
   const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download='riwayat-konter-'+nowDate()+'.csv';a.click();
-  showToast('Data berhasil diexport! 📥');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='riwayat-konter-'+nowDate()+'.csv'; a.click();
+  showToast('Export berhasil! 📥');
 }
 
 function clearRiwayat(){
   if(!confirm('Hapus semua riwayat transaksi?'))return;
-  state.riwayat=[];saveState();renderRiwayat();showToast('Riwayat dihapus');updateCancelBanner();
+  state.riwayat=[]; saveState(); renderRiwayat(); showToast('Riwayat dihapus'); updateCancelBanner();
 }
 
-function showToast(msg, color){
+function showToast(msg, type){
   const t=document.getElementById('toast');
   t.textContent=msg;
-  if(color==='var(--red)'){
-    t.style.background='rgba(255,68,102,0.15)';
+  if(type==='red'){
+    t.style.background='rgba(255,75,110,0.14)';
     t.style.borderColor='var(--red)';
     t.style.color='var(--red)';
-    t.style.boxShadow='0 0 20px rgba(255,68,102,0.3)';
+    t.style.boxShadow='0 0 20px rgba(255,75,110,0.3)';
   } else {
-    t.style.background='rgba(0,212,255,0.12)';
-    t.style.borderColor='var(--cyan)';
-    t.style.color='var(--cyan)';
-    t.style.boxShadow='0 0 20px rgba(0,212,255,0.3)';
+    t.style.background='rgba(255,107,157,0.12)';
+    t.style.borderColor='var(--sakura)';
+    t.style.color='var(--sakura)';
+    t.style.boxShadow='0 0 20px rgba(255,107,157,0.3)';
   }
   t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2500);
@@ -1853,7 +2079,7 @@ function showToast(msg, color){
 
 /* INIT */
 document.getElementById('topbar-date').textContent=
-  new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).toUpperCase();
+  new Date().toLocaleDateString('id-ID',{weekday:'short',day:'numeric',month:'short',year:'numeric'}).toUpperCase();
 
 showLoading(true);
 </script>
